@@ -71,3 +71,4 @@
 - Rozważenie cache'owania losowej kolejności w sesji frontendowej (opcjonalnie)
 
 
+
