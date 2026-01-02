@@ -16,37 +16,34 @@ const PUBLIC_PATHS = [
   "/api/auth/logout",
 ];
 
-export const onRequest = defineMiddleware(
-  async ({ locals, cookies, url, request, redirect }, next) => {
-    // Skip auth check for public paths
-    if (PUBLIC_PATHS.includes(url.pathname)) {
-      return next();
-    }
-
-    const supabase = createSupabaseServerInstance({
-      cookies,
-      headers: request.headers,
-    });
-
-    // IMPORTANT: Always get user session first before any other operations
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      locals.user = {
-        email: user.email ?? "",
-        id: user.id,
-      };
-      locals.supabase = supabase;
-    } else if (!PUBLIC_PATHS.includes(url.pathname)) {
-      // Redirect to login for protected routes
-      return redirect("/auth/login");
-    } else {
-      locals.supabase = supabase;
-    }
-
+export const onRequest = defineMiddleware(async ({ locals, cookies, url, request, redirect }, next) => {
+  // Skip auth check for public paths
+  if (PUBLIC_PATHS.includes(url.pathname)) {
     return next();
-  },
-);
+  }
 
+  const supabase = createSupabaseServerInstance({
+    cookies,
+    headers: request.headers,
+  });
+
+  // IMPORTANT: Always get user session first before any other operations
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    locals.user = {
+      email: user.email ?? "",
+      id: user.id,
+    };
+    locals.supabase = supabase;
+  } else if (!PUBLIC_PATHS.includes(url.pathname)) {
+    // Redirect to login for protected routes
+    return redirect("/auth/login");
+  } else {
+    locals.supabase = supabase;
+  }
+
+  return next();
+});

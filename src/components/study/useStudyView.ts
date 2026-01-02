@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { fetchFlashcards, updateFlashcard, deleteFlashcard } from "../../lib/utils/api-client.ts";
-import type { StudyViewState, FlashcardDTO, UpdateFlashcardCommand, ErrorResponse } from "../../types.ts";
+import type { StudyViewState, FlashcardDTO, UpdateFlashcardCommand } from "../../types.ts";
 
 /**
  * Custom hook for managing the StudyView state and operations.
@@ -38,7 +38,6 @@ export function useStudyView() {
 
       // Handle 401 - redirect to login (handled by middleware in production)
       if (error.error.code === "UNAUTHORIZED") {
-        console.log("[useStudyView] UNAUTHORIZED - redirecting to /");
         // Don't redirect immediately - let user see the error
         // window.location.href = "/";
       }
@@ -288,7 +287,7 @@ export function useStudyView() {
         });
 
         // Handle 401 - redirect to login
-        if (error.error.code === "UNAUTHORIZED") {
+        if (error.error.code === "UNAUTHORIZED" && typeof window !== "undefined") {
           window.location.href = "/";
         }
 
@@ -390,7 +389,7 @@ export function useStudyView() {
         });
 
         // Handle 401 - redirect to login
-        if (error.error.code === "UNAUTHORIZED") {
+        if (error.error.code === "UNAUTHORIZED" && typeof window !== "undefined") {
           window.location.href = "/";
         }
 

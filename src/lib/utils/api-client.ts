@@ -19,41 +19,44 @@ import type {
 async function getAuthToken(): Promise<string | null> {
   try {
     const supabaseClient = getSupabaseClient();
-    
+
     // First try to get user (checks cookies and localStorage)
     const {
       data: { user },
       error: userError,
     } = await supabaseClient.auth.getUser();
-    
+
     if (userError || !user) {
       // If getUser fails, try getSession as fallback
       const {
         data: { session },
         error: sessionError,
       } = await supabaseClient.auth.getSession();
-      
+
       if (sessionError) {
+        // eslint-disable-next-line no-console
         console.error("[getAuthToken] Error getting session:", sessionError);
         return null;
       }
-      
+
       return session?.access_token || null;
     }
-    
+
     // If we have a user, get the session to get the token
     const {
       data: { session },
       error: sessionError,
     } = await supabaseClient.auth.getSession();
-    
+
     if (sessionError) {
+      // eslint-disable-next-line no-console
       console.error("[getAuthToken] Error getting session after getUser:", sessionError);
       return null;
     }
-    
+
     return session?.access_token || null;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("[getAuthToken] Exception getting session:", error);
     return null;
   }

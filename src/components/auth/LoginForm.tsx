@@ -34,7 +34,7 @@ export function LoginForm() {
 
       // Redirect to study page after successful login
       window.location.href = "/study";
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
       setIsLoading(false);
     }
@@ -102,4 +102,3 @@ export function LoginForm() {
     </Card>
   );
 }
-

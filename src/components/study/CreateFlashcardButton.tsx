@@ -8,10 +8,5 @@ export function CreateFlashcardButton() {
     window.location.href = "/create";
   };
 
-  return (
-    <Button onClick={handleClick}>
-      Dodaj fiszkę
-    </Button>
-  );
+  return <Button onClick={handleClick}>Dodaj fiszkę</Button>;
 }
-

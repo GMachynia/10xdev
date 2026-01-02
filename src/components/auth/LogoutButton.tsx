@@ -14,11 +14,9 @@ export function LogoutButton() {
       if (response.ok) {
         window.location.href = "/auth/login";
       } else {
-        console.error("Failed to logout");
         setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Error during logout:", error);
+    } catch {
       setIsLoading(false);
     }
   };
@@ -29,4 +27,3 @@ export function LogoutButton() {
     </Button>
   );
 }
-

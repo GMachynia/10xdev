@@ -12,7 +12,7 @@ import type { FlashcardsCarouselProps } from "../../types.ts";
 export function FlashcardsCarousel({
   flashcards,
   currentIndex,
-  mode,
+  mode: _mode,
   isCardFlipped,
   onCardChange,
   onCardFlip,

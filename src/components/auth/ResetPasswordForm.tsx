@@ -33,7 +33,7 @@ export function ResetPasswordForm() {
       }
 
       setSuccess(true);
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
       setIsLoading(false);
     }
@@ -99,4 +99,3 @@ export function ResetPasswordForm() {
     </Card>
   );
 }
-

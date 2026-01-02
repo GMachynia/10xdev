@@ -23,10 +23,10 @@ export function StudyViewClient(_props: StudyViewClientProps) {
     fetchFlashcards,
     setMode,
     startStudySession,
-    resetStudySession,
+    resetStudySession: _resetStudySession,
     navigateToCard,
-    goToPrevious,
-    goToNext,
+    goToPrevious: _goToPrevious,
+    goToNext: _goToNext,
     flipCard,
     openEditDialog,
     closeEditDialog,
@@ -77,7 +77,6 @@ export function StudyViewClient(_props: StudyViewClientProps) {
       await updateFlashcard(id, data);
     } catch (error) {
       // Error is handled in the hook, but we can show a toast here if needed
-      console.error("Failed to update flashcard:", error);
       throw error; // Re-throw to let dialog handle it
     }
   };
@@ -88,7 +87,6 @@ export function StudyViewClient(_props: StudyViewClientProps) {
       await deleteFlashcard(id);
     } catch (error) {
       // Error is handled in the hook, but we can show a toast here if needed
-      console.error("Failed to delete flashcard:", error);
       throw error; // Re-throw to let dialog handle it
     }
   };

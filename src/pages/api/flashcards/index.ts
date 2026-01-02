@@ -169,7 +169,7 @@ export const POST: APIRoute = async (context) => {
     let command: CreateFlashcardCommand;
     try {
       command = await context.request.json();
-    } catch (error) {
+    } catch {
       return createErrorResponse("VALIDATION_ERROR", "Invalid request body. Expected JSON.", {
         field: "body",
       });
@@ -214,10 +214,7 @@ export const POST: APIRoute = async (context) => {
     }
 
     // Create flashcard
-    const {
-      data: flashcard,
-      error: serviceError,
-    } = await createFlashcard(context.locals.supabase, user.id, {
+    const { data: flashcard, error: serviceError } = await createFlashcard(context.locals.supabase, user.id, {
       source_text: trimmedSourceText,
       translation: command.translation?.trim() || null,
     });

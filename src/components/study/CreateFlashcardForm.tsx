@@ -62,8 +62,7 @@ export function CreateFlashcardForm() {
       const { data, error } = await createFlashcard(command);
 
       if (error) {
-        const errorMessage =
-          error.error?.message || "Nie udało się utworzyć fiszki";
+        const errorMessage = error.error?.message || "Nie udało się utworzyć fiszki";
         setValidationError(errorMessage);
         setIsSubmitting(false);
         return;
@@ -134,4 +133,3 @@ export function CreateFlashcardForm() {
     </form>
   );
 }
-

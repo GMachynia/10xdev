@@ -50,7 +50,7 @@ export function RegisterForm() {
       setTimeout(() => {
         window.location.href = "/study";
       }, 1500);
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
       setIsLoading(false);
     }
@@ -140,4 +140,3 @@ export function RegisterForm() {
     </Card>
   );
 }
-
