@@ -215,7 +215,6 @@ export interface StudyViewState {
 export interface FlashcardsCarouselProps {
   flashcards: FlashcardDTO[];
   currentIndex: number;
-  mode: "browse" | "study";
   isCardFlipped: boolean;
   onCardChange: (index: number) => void;
   onCardFlip: () => void;

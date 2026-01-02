@@ -32,9 +32,8 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 // Mock IntersectionObserver
-// eslint-disable-next-line @typescript-eslint/no-useless-constructor, @typescript-eslint/no-empty-function
 global.IntersectionObserver = class IntersectionObserver {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor, @typescript-eslint/no-empty-function
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   disconnect() {}
@@ -49,9 +48,8 @@ global.IntersectionObserver = class IntersectionObserver {
 } as any;
 
 // Mock ResizeObserver
-// eslint-disable-next-line @typescript-eslint/no-useless-constructor, @typescript-eslint/no-empty-function
 global.ResizeObserver = class ResizeObserver {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor, @typescript-eslint/no-empty-function
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   disconnect() {}

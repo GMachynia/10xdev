@@ -288,7 +288,10 @@ export function useStudyView() {
 
         // Handle 401 - redirect to login
         if (error.error.code === "UNAUTHORIZED" && typeof window !== "undefined") {
-          window.location.href = "/";
+          // Use setTimeout to defer the redirect outside of the render cycle
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 0);
         }
 
         throw error;
@@ -390,7 +393,10 @@ export function useStudyView() {
 
         // Handle 401 - redirect to login
         if (error.error.code === "UNAUTHORIZED" && typeof window !== "undefined") {
-          window.location.href = "/";
+          // Use setTimeout to defer the redirect outside of the render cycle
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 0);
         }
 
         throw error;

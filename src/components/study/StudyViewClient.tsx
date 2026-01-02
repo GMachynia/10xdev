@@ -17,16 +17,13 @@ interface StudyViewClientProps {
  * StudyViewClient is the main React component for the study view.
  * It manages the entire study view state and coordinates all sub-components.
  */
-export function StudyViewClient(_props: StudyViewClientProps) {
+export function StudyViewClient() {
   const {
     state,
     fetchFlashcards,
     setMode,
     startStudySession,
-    resetStudySession: _resetStudySession,
     navigateToCard,
-    goToPrevious: _goToPrevious,
-    goToNext: _goToNext,
     flipCard,
     openEditDialog,
     closeEditDialog,
@@ -73,22 +70,12 @@ export function StudyViewClient(_props: StudyViewClientProps) {
 
   // Handle save in edit dialog
   const handleSave = async (id: string, data: Parameters<typeof updateFlashcard>[1]) => {
-    try {
-      await updateFlashcard(id, data);
-    } catch (error) {
-      // Error is handled in the hook, but we can show a toast here if needed
-      throw error; // Re-throw to let dialog handle it
-    }
+    await updateFlashcard(id, data);
   };
 
   // Handle confirm in delete dialog
   const handleDeleteConfirm = async (id: string) => {
-    try {
-      await deleteFlashcard(id);
-    } catch (error) {
-      // Error is handled in the hook, but we can show a toast here if needed
-      throw error; // Re-throw to let dialog handle it
-    }
+    await deleteFlashcard(id);
   };
 
   return (
@@ -113,7 +100,6 @@ export function StudyViewClient(_props: StudyViewClientProps) {
             <FlashcardsCarousel
               flashcards={currentFlashcards}
               currentIndex={state.currentIndex}
-              mode={state.mode}
               isCardFlipped={state.isCardFlipped}
               onCardChange={navigateToCard}
               onCardFlip={flipCard}

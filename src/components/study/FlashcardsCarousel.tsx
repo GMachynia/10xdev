@@ -12,7 +12,6 @@ import type { FlashcardsCarouselProps } from "../../types.ts";
 export function FlashcardsCarousel({
   flashcards,
   currentIndex,
-  mode: _mode,
   isCardFlipped,
   onCardChange,
   onCardFlip,
@@ -63,7 +62,6 @@ export function FlashcardsCarousel({
         onCardChange(currentIndex - 1);
       }
     },
-    preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
 
