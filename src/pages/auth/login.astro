@@ -1,0 +1,13 @@
+---
+export const prerender = false;
+
+import Layout from "../../layouts/Layout.astro";
+import { LoginForm } from "../../components/auth/LoginForm";
+---
+
+<Layout title="Logowanie">
+  <div class="relative w-full mx-auto min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 p-4 sm:p-8 flex items-center justify-center">
+    <LoginForm client:load />
+  </div>
+</Layout>
+

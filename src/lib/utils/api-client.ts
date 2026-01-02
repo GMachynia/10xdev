@@ -1,4 +1,4 @@
-import { supabaseClient } from "../../db/supabase.client.ts";
+import { getSupabaseClient } from "../../db/supabase.client.ts";
 import type {
   ListFlashcardsResponse,
   GetFlashcardResponse,
@@ -14,16 +14,41 @@ import type {
 /**
  * Gets the current session token from Supabase.
  * Returns null if user is not authenticated.
+ * Uses getUser() which checks both localStorage and cookies set by the server.
  */
 async function getAuthToken(): Promise<string | null> {
   try {
+    const supabaseClient = getSupabaseClient();
+    
+    // First try to get user (checks cookies and localStorage)
+    const {
+      data: { user },
+      error: userError,
+    } = await supabaseClient.auth.getUser();
+    
+    if (userError || !user) {
+      // If getUser fails, try getSession as fallback
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabaseClient.auth.getSession();
+      
+      if (sessionError) {
+        console.error("[getAuthToken] Error getting session:", sessionError);
+        return null;
+      }
+      
+      return session?.access_token || null;
+    }
+    
+    // If we have a user, get the session to get the token
     const {
       data: { session },
-      error,
+      error: sessionError,
     } = await supabaseClient.auth.getSession();
     
-    if (error) {
-      console.error("[getAuthToken] Error getting session:", error);
+    if (sessionError) {
+      console.error("[getAuthToken] Error getting session after getUser:", sessionError);
       return null;
     }
     

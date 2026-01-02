@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "../../db/supabase.client.ts";
-import type { FlashcardDTO, ListFlashcardsQuery, UpdateFlashcardCommand } from "../../types.ts";
+import type { FlashcardDTO, ListFlashcardsQuery, CreateFlashcardCommand, UpdateFlashcardCommand } from "../../types.ts";
 
 /**
  * Retrieves all flashcards for a specific user with optional ordering and pagination.
@@ -220,6 +220,85 @@ export async function updateFlashcard(
       if (errorMessage.includes("not found") || errorMessage.includes("pgrst116")) {
         return { data: null, error: new Error("Flashcard not found") };
       }
+      return { data: null, error: new Error(error.message) };
+    }
+
+    if (!data) {
+      return { data: null, error: null };
+    }
+
+    // Map to DTO
+    const dto: FlashcardDTO = {
+      id: data.id,
+      source_text: data.source_text,
+      translation: data.translation,
+    };
+
+    return { data: dto, error: null };
+  } catch (error) {
+    // Handle unexpected errors
+    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+    return { data: null, error: new Error(errorMessage) };
+  }
+}
+
+/**
+ * Creates a new flashcard for a specific user.
+ *
+ * Uses Row Level Security (RLS) to ensure the user can only create flashcards for themselves.
+ * The user_id is automatically set by the database trigger.
+ *
+ * @param supabase - Supabase client instance from context.locals
+ * @param userId - UUID of the authenticated user (for additional validation)
+ * @param command - Create command with source_text and translation
+ * @returns Object containing the created flashcard DTO or null, and an error if occurred
+ *
+ * @example
+ * ```typescript
+ * const { data: flashcard, error } = await createFlashcard(supabase, userId, {
+ *   source_text: "Hello",
+ *   translation: "Cześć"
+ * });
+ * if (error) {
+ *   // Handle error
+ * }
+ * ```
+ */
+export async function createFlashcard(
+  supabase: SupabaseClient,
+  userId: string,
+  command: CreateFlashcardCommand
+): Promise<{ data: FlashcardDTO | null; error: Error | null }> {
+  // Early return for invalid input
+  if (!userId) {
+    return { data: null, error: new Error("userId is required") };
+  }
+
+  // Validate source_text
+  const trimmedSourceText = command.source_text?.trim() || "";
+  if (trimmedSourceText.length === 0) {
+    return { data: null, error: new Error("Source text is required") };
+  }
+
+  if (trimmedSourceText.length > 200) {
+    return {
+      data: null,
+      error: new Error("Source text exceeds maximum length of 200 characters"),
+    };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("flashcards")
+      .insert({
+        source_text: trimmedSourceText,
+        translation: command.translation?.trim() || null,
+        user_id: userId,
+      })
+      .select("id, source_text, translation")
+      .single();
+
+    if (error) {
       return { data: null, error: new Error(error.message) };
     }
 

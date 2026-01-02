@@ -1,6 +1,14 @@
 ---
-import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
+
+const { user } = Astro.locals;
+
+// Redirect authenticated users to study page
+if (user) {
+  return Astro.redirect("/study");
+}
+
+import Welcome from "../components/Welcome.astro";
 ---
 
 <Layout>

@@ -1,22 +1,28 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { StudyViewClient } from "../components/study/StudyViewClient";
+import { CreateFlashcardForm } from "../components/study/CreateFlashcardForm";
 import { LogoutButton } from "../components/auth/LogoutButton";
-import { CreateFlashcardButton } from "../components/study/CreateFlashcardButton";
 
 const { user } = Astro.locals;
+
+// Redirect unauthenticated users to login
+if (!user) {
+  return Astro.redirect("/auth/login");
+}
 ---
 
-<Layout title="Przeglądanie i Powtórki Fiszek">
+<Layout title="Utwórz Fiszkę">
   <div class="container mx-auto px-4 py-4">
     <div class="flex items-center justify-between mb-4">
-      <h1 class="text-2xl font-bold">Przeglądanie i Powtórki Fiszek</h1>
+      <h1 class="text-2xl font-bold">Utwórz Fiszkę</h1>
       <div class="flex items-center gap-4">
-        <CreateFlashcardButton client:load />
         {user && <span class="text-sm text-muted-foreground">{user.email}</span>}
         <LogoutButton client:load />
       </div>
     </div>
+    <div class="max-w-2xl mx-auto">
+      <CreateFlashcardForm client:load />
+    </div>
   </div>
-  <StudyViewClient client:load />
 </Layout>
+
