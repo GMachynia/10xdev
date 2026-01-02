@@ -9,6 +9,29 @@ A modern, opinionated starter template for building fast, accessible, and AI-fri
 - [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
 - [Tailwind CSS](https://tailwindcss.com/) v4.0.17 - Utility-first CSS framework
 
+### Testing
+
+- **Unit & Integration Tests**:
+  - [Vitest](https://vitest.dev/) - Fast unit test framework (recommended for Astro/Vite projects)
+  - [React Testing Library](https://testing-library.com/react) - Testing utilities for React components
+  - [@testing-library/user-event](https://testing-library.com/docs/user-event/intro) - User interaction simulation
+  - [MSW (Mock Service Worker)](https://mswjs.io/) - API mocking for tests
+  - [@vitest/coverage-v8](https://vitest.dev/guide/coverage.html) - Code coverage reporting
+
+- **End-to-End Tests**:
+  - [Playwright](https://playwright.dev/) - Cross-browser E2E testing framework
+  - Alternative: [Cypress](https://www.cypress.io/) (if preferred by the team)
+
+- **Performance Testing**:
+  - [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) - Automated performance testing
+  - [k6](https://k6.io/) - Load testing for API endpoints
+  - Chrome DevTools Performance - Performance profiling
+
+- **Security Testing**:
+  - [OWASP ZAP](https://www.zaproxy.org/) - Security vulnerability scanning
+  - [Snyk](https://snyk.io/) - Dependency vulnerability analysis
+  - `npm audit` - NPM package vulnerability checking
+
 ## Prerequisites
 
 - Node.js v22.14.0 (as specified in `.nvmrc`)
@@ -43,11 +66,27 @@ npm run build
 
 ## Available Scripts
 
+### Development
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
+
+### Code Quality
 - `npm run lint` - Run ESLint
 - `npm run lint:fix` - Fix ESLint issues
+- `npm run format` - Format code with Prettier
+
+### Testing
+- `npm test` - Run unit tests once
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:ui` - Run tests with Vitest UI
+- `npm run test:coverage` - Run tests with coverage report
+- `npm run test:e2e` - Run end-to-end tests with Playwright
+- `npm run test:e2e:ui` - Run E2E tests with Playwright UI
+- `npm run test:e2e:debug` - Run E2E tests in debug mode
+- `npm run test:e2e:codegen` - Generate E2E tests using Playwright codegen
+
+For more details about testing, see [tests/README.md](./tests/README.md).
 
 ## Project Structure
 

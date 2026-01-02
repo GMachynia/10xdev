@@ -1,0 +1,815 @@
+# Plan Testów - Aplikacja do Nauki z Fiszkami
+
+## 1. Wprowadzenie i Cele Testowania
+
+### 1.1 Cel Dokumentu
+Niniejszy dokument stanowi kompleksowy plan testów dla aplikacji do nauki z fiszkami (flashcards), opartej na technologiach Astro 5, React 19, TypeScript 5 oraz Supabase. Plan określa strategię, zakres, metody i narzędzia testowania, mające na celu zapewnienie wysokiej jakości produktu końcowego.
+
+### 1.2 Cele Testowania
+- **Weryfikacja funkcjonalności**: Potwierdzenie, że wszystkie funkcje aplikacji działają zgodnie z wymaganiami
+- **Zapewnienie bezpieczeństwa**: Weryfikacja poprawności autoryzacji, autentykacji oraz Row Level Security (RLS)
+- **Sprawdzenie jakości kodu**: Weryfikacja poprawności implementacji, obsługi błędów i walidacji danych
+- **Ocena wydajności**: Sprawdzenie wydajności aplikacji przy różnych obciążeniach
+- **Zapewnienie użyteczności**: Weryfikacja intuicyjności interfejsu użytkownika i responsywności
+- **Kompatybilność**: Sprawdzenie działania aplikacji w różnych przeglądarkach i środowiskach
+
+### 1.3 Zakres Dokumentu
+Plan testów obejmuje:
+- Testy jednostkowe (Unit Tests)
+- Testy integracyjne (Integration Tests)
+- Testy end-to-end (E2E Tests)
+- Testy bezpieczeństwa (Security Tests)
+- Testy wydajnościowe (Performance Tests)
+- Testy użyteczności (Usability Tests)
+- Testy regresyjne (Regression Tests)
+
+## 2. Zakres Testów
+
+### 2.1 Moduły Podlegające Testowaniu
+
+#### 2.1.1 Autentykacja i Autoryzacja
+- **Logowanie użytkownika** (`/api/auth/login`)
+- **Rejestracja użytkownika** (`/api/auth/register`)
+- **Reset hasła** (`/api/auth/reset-password`)
+- **Wylogowanie** (`/api/auth/logout`)
+- **Middleware autoryzacyjny** (`src/middleware/index.ts`)
+- **Komponenty formularzy**: `LoginForm`, `RegisterForm`, `ResetPasswordForm`, `LogoutButton`
+
+#### 2.1.2 Zarządzanie Fiszkami (CRUD)
+- **Tworzenie fiszek** (`POST /api/flashcards`)
+- **Pobieranie listy fiszek** (`GET /api/flashcards`)
+- **Pobieranie pojedynczej fiszki** (`GET /api/flashcards/:id`)
+- **Aktualizacja fiszek** (`PATCH /api/flashcards/:id`)
+- **Usuwanie fiszek** (`DELETE /api/flashcards/:id`)
+- **Serwis flashcards** (`src/lib/services/flashcards.service.ts`)
+- **Komponenty UI**: `CreateFlashcardForm`, `EditFlashcardDialog`, `DeleteFlashcardDialog`
+
+#### 2.1.3 Tryby Nauki
+- **Tryb przeglądania** (browse mode)
+- **Tryb nauki** (study mode)
+- **Sesja nauki** z losowym porządkiem fiszek
+- **Nawigacja między fiszkami**
+- **Odwracanie fiszek** (flip card)
+- **Komponenty**: `StudyViewClient`, `FlashcardsCarousel`, `StudyModeSelector`
+
+#### 2.1.4 Walidacja i Obsługa Błędów
+- **Walidacja UUID** (`src/lib/utils/validation.ts`)
+- **Obsługa błędów API** (`src/lib/utils/error-handler.ts`)
+- **Walidacja długości tekstu** (max 200 znaków dla `source_text`)
+- **Walidacja typów danych**
+- **Obsługa błędów sieciowych**
+
+#### 2.1.5 Integracja z Supabase
+- **Połączenie z bazą danych**
+- **Row Level Security (RLS) policies**
+- **Triggers i funkcje bazy danych**
+- **Zarządzanie sesjami użytkownika**
+- **Obsługa cookies i autoryzacji**
+
+### 2.2 Moduły Wyłączone z Testowania
+- Pliki konfiguracyjne (astro.config.mjs, tailwind.config.ts, etc.)
+- Pliki migracji bazy danych (weryfikowane osobno)
+- Dokumentacja (README.md, etc.)
+
+## 3. Typy Testów do Przeprowadzenia
+
+### 3.1 Testy Jednostkowe (Unit Tests)
+
+#### 3.1.1 Funkcje Utylitarne
+- **`isValidUUID()`**: Testy walidacji formatu UUID
+  - Poprawne UUID v4
+  - Niepoprawne formaty (null, undefined, stringi, nieprawidłowe UUID)
+  
+- **`createErrorResponse()`**: Testy tworzenia odpowiedzi błędów
+  - Wszystkie kody błędów (VALIDATION_ERROR, UNAUTHORIZED, NOT_FOUND, DATABASE_ERROR, INTERNAL_SERVER_ERROR)
+  - Mapowanie kodów na statusy HTTP
+  - Format odpowiedzi JSON
+
+#### 3.1.2 Serwisy
+- **`flashcards.service.ts`**: Testy wszystkich funkcji serwisu
+  - `listFlashcards()`: różne parametry query (order, limit, offset)
+  - `getFlashcardById()`: poprawne i niepoprawne ID
+  - `createFlashcard()`: walidacja danych wejściowych
+  - `updateFlashcard()`: częściowe i pełne aktualizacje
+  - `deleteFlashcard()`: usuwanie istniejących i nieistniejących fiszek
+
+#### 3.1.3 React Hooks
+- **`useStudyView`**: Testy logiki stanu
+  - Zmiana trybu (browse/study)
+  - Rozpoczęcie sesji nauki
+  - Nawigacja między fiszkami
+  - Odwracanie fiszek
+  - Optymistyczne aktualizacje (update/delete)
+  - Obsługa błędów i rollback
+
+#### 3.1.4 Komponenty React
+- **Komponenty UI**: Testy renderowania i interakcji
+  - `LoginForm`, `RegisterForm`, `ResetPasswordForm`
+  - `CreateFlashcardForm`, `EditFlashcardDialog`, `DeleteFlashcardDialog`
+  - `FlashcardCard`, `FlashcardsCarousel`
+  - `StudyModeSelector`, `ProgressIndicator`, `CharacterCounter`
+
+### 3.2 Testy Integracyjne (Integration Tests)
+
+#### 3.2.1 Integracja API z Bazą Danych
+- **Endpointy flashcards z Supabase**
+  - Tworzenie fiszki → weryfikacja w bazie
+  - Pobieranie fiszek → weryfikacja filtrowania po user_id
+  - Aktualizacja fiszki → weryfikacja zmian w bazie
+  - Usuwanie fiszki → weryfikacja usunięcia z bazy
+  - Row Level Security → weryfikacja izolacji danych użytkowników
+
+#### 3.2.2 Integracja Autentykacji
+- **Flow autoryzacyjny**
+  - Rejestracja → logowanie → dostęp do chronionych zasobów
+  - Wylogowanie → brak dostępu do chronionych zasobów
+  - Middleware → przekierowania dla nieautoryzowanych użytkowników
+  - Sesje użytkownika → utrzymanie stanu między requestami
+
+#### 3.2.3 Integracja Frontend-Backend
+- **Komunikacja React z API**
+  - `api-client.ts`: wszystkie metody HTTP
+  - Obsługa błędów sieciowych
+  - Przekazywanie tokenów autoryzacyjnych
+  - Parsowanie odpowiedzi JSON
+
+### 3.3 Testy End-to-End (E2E Tests)
+
+#### 3.3.1 Scenariusze Użytkownika
+1. **Rejestracja i pierwsze logowanie**
+   - Użytkownik rejestruje konto
+   - Użytkownik loguje się
+   - Użytkownik jest przekierowany do strony study
+
+2. **Tworzenie i zarządzanie fiszkami**
+   - Użytkownik tworzy nową fiszkę
+   - Użytkownik przegląda listę fiszek
+   - Użytkownik edytuje fiszkę
+   - Użytkownik usuwa fiszkę
+
+3. **Sesja nauki**
+   - Użytkownik przechodzi w tryb nauki
+   - Użytkownik nawiguje między fiszkami
+   - Użytkownik odwraca fiszki
+   - Użytkownik kończy sesję nauki
+
+4. **Obsługa błędów**
+   - Użytkownik próbuje uzyskać dostęp bez autoryzacji
+   - Użytkownik próbuje edytować nieistniejącą fiszkę
+   - Użytkownik wprowadza nieprawidłowe dane
+
+### 3.4 Testy Bezpieczeństwa (Security Tests)
+
+#### 3.4.1 Autoryzacja i Autentykacja
+- **Testy penetracyjne autoryzacji**
+  - Próba dostępu do API bez tokena
+  - Próba dostępu z nieprawidłowym tokenem
+  - Próba dostępu do fiszek innego użytkownika
+  - Próba manipulacji user_id w requestach
+
+#### 3.4.2 Row Level Security (RLS)
+- **Weryfikacja polityk RLS**
+  - Użytkownik anonimowy nie może odczytać fiszek
+  - Użytkownik autentykowany widzi tylko swoje fiszki
+  - Użytkownik nie może modyfikować fiszek innych użytkowników
+  - Trigger automatycznie ustawia user_id
+
+#### 3.4.3 Walidacja Wejścia
+- **Testy SQL Injection** (mimo że Supabase używa parametrów)
+- **Testy XSS** (Cross-Site Scripting)
+- **Testy CSRF** (Cross-Site Request Forgery)
+- **Walidacja długości i formatu danych**
+
+### 3.5 Testy Wydajnościowe (Performance Tests)
+
+#### 3.5.1 Wydajność API
+- **Czasy odpowiedzi endpointów**
+  - GET /api/flashcards (różne rozmiary zbiorów)
+  - POST /api/flashcards
+  - PATCH /api/flashcards/:id
+  - DELETE /api/flashcards/:id
+
+#### 3.5.2 Wydajność Frontend
+- **Czasy ładowania stron**
+  - Strona główna (/)
+  - Strona logowania (/auth/login)
+  - Strona nauki (/study)
+  - Strona tworzenia fiszki (/create)
+
+#### 3.5.3 Testy Obciążeniowe
+- **Równoczesne requesty**
+  - Wielu użytkowników tworzących fiszki jednocześnie
+  - Wielu użytkowników pobierających fiszki jednocześnie
+  - Testy pod obciążeniem (stress tests)
+
+### 3.6 Testy Użyteczności (Usability Tests)
+
+#### 3.6.1 Interfejs Użytkownika
+- **Responsywność** (mobile, tablet, desktop)
+- **Dostępność** (a11y): czytniki ekranu, nawigacja klawiaturą
+- **Intuicyjność**: łatwość nawigacji, czytelność
+- **Feedback użytkownika**: komunikaty błędów, stany ładowania
+
+### 3.7 Testy Regresyjne (Regression Tests)
+
+#### 3.7.1 Testy Smoke
+- Podstawowe funkcjonalności po każdej zmianie
+- Szybka weryfikacja, że nic się nie zepsuło
+
+#### 3.7.2 Testy Sanity
+- Weryfikacja kluczowych ścieżek użytkownika
+- Testy przed każdym release'em
+
+## 4. Scenariusze Testowe dla Kluczowych Funkcjonalności
+
+### 4.1 Autentykacja
+
+#### TC-AUTH-001: Rejestracja użytkownika
+**Warunki wstępne**: Użytkownik nie jest zalogowany
+**Kroki**:
+1. Użytkownik przechodzi na `/auth/register`
+2. Wypełnia formularz: email, hasło
+3. Klika "Zarejestruj się"
+**Oczekiwany rezultat**: 
+- Użytkownik zostaje zarejestrowany
+- Użytkownik jest automatycznie zalogowany
+- Przekierowanie do `/study`
+
+#### TC-AUTH-002: Logowanie użytkownika
+**Warunki wstępne**: Użytkownik ma konto
+**Kroki**:
+1. Użytkownik przechodzi na `/auth/login`
+2. Wprowadza email i hasło
+3. Klika "Zaloguj się"
+**Oczekiwany rezultat**: 
+- Użytkownik zostaje zalogowany
+- Przekierowanie do `/study`
+
+#### TC-AUTH-003: Logowanie z nieprawidłowymi danymi
+**Warunki wstępne**: Użytkownik nie jest zalogowany
+**Kroki**:
+1. Użytkownik wprowadza nieprawidłowy email lub hasło
+2. Klika "Zaloguj się"
+**Oczekiwany rezultat**: 
+- Wyświetlenie komunikatu błędu
+- Użytkownik pozostaje na stronie logowania
+
+#### TC-AUTH-004: Wylogowanie
+**Warunki wstępne**: Użytkownik jest zalogowany
+**Kroki**:
+1. Użytkownik klika przycisk "Wyloguj"
+**Oczekiwany rezultat**: 
+- Użytkownik zostaje wylogowany
+- Przekierowanie do strony głównej
+- Brak dostępu do chronionych zasobów
+
+#### TC-AUTH-005: Dostęp do chronionych zasobów bez autoryzacji
+**Warunki wstępne**: Użytkownik nie jest zalogowany
+**Kroki**:
+1. Użytkownik próbuje przejść na `/study` lub `/create`
+**Oczekiwany rezultat**: 
+- Automatyczne przekierowanie do `/auth/login`
+
+### 4.2 Zarządzanie Fiszkami
+
+#### TC-FLASH-001: Tworzenie fiszki
+**Warunki wstępne**: Użytkownik jest zalogowany
+**Kroki**:
+1. Użytkownik przechodzi na `/create`
+2. Wypełnia formularz: source_text (max 200 znaków), translation (opcjonalne)
+3. Klika "Utwórz fiszkę"
+**Oczekiwany rezultat**: 
+- Fiszka zostaje utworzona
+- Przekierowanie do `/study`
+- Fiszka jest widoczna na liście
+
+#### TC-FLASH-002: Tworzenie fiszki z nieprawidłowymi danymi
+**Warunki wstępne**: Użytkownik jest zalogowany
+**Kroki**:
+1. Użytkownik próbuje utworzyć fiszkę z:
+   - Pustym source_text
+   - source_text > 200 znaków
+   - Nieprawidłowym typem danych
+**Oczekiwany rezultat**: 
+- Wyświetlenie komunikatu błędu walidacji
+- Fiszka nie zostaje utworzona
+
+#### TC-FLASH-003: Pobieranie listy fiszek
+**Warunki wstępne**: Użytkownik jest zalogowany, ma utworzone fiszki
+**Kroki**:
+1. Użytkownik przechodzi na `/study`
+2. System pobiera listę fiszek
+**Oczekiwany rezultat**: 
+- Wyświetlenie wszystkich fiszek użytkownika
+- Fiszki są posortowane według wybranego porządku (id/random)
+
+#### TC-FLASH-004: Edycja fiszki
+**Warunki wstępne**: Użytkownik jest zalogowany, ma utworzone fiszki
+**Kroki**:
+1. Użytkownik klika "Edytuj" na fiszce
+2. Modyfikuje source_text lub translation
+3. Klika "Zapisz"
+**Oczekiwany rezultat**: 
+- Fiszka zostaje zaktualizowana
+- Zmiany są widoczne natychmiast (optimistic update)
+- Dialog edycji się zamyka
+
+#### TC-FLASH-005: Usuwanie fiszki
+**Warunki wstępne**: Użytkownik jest zalogowany, ma utworzone fiszki
+**Kroki**:
+1. Użytkownik klika "Usuń" na fiszce
+2. Potwierdza usunięcie w dialogu
+**Oczekiwany rezultat**: 
+- Fiszka zostaje usunięta
+- Fiszka znika z listy natychmiast (optimistic update)
+- Dialog usuwania się zamyka
+
+#### TC-FLASH-006: Próba dostępu do fiszki innego użytkownika
+**Warunki wstępne**: Użytkownik A i B są zalogowani, każdy ma swoje fiszki
+**Kroki**:
+1. Użytkownik A próbuje uzyskać dostęp do fiszki użytkownika B (przez API)
+**Oczekiwany rezultat**: 
+- Zwrócenie błędu 404 NOT_FOUND
+- RLS blokuje dostęp
+
+### 4.3 Tryby Nauki
+
+#### TC-STUDY-001: Przełączanie między trybami
+**Warunki wstępne**: Użytkownik jest zalogowany, ma fiszki
+**Kroki**:
+1. Użytkownik przechodzi między trybem "Przeglądanie" a "Nauka"
+**Oczekiwany rezultat**: 
+- Interfejs zmienia się odpowiednio
+- Fiszki są wyświetlane w odpowiednim porządku
+
+#### TC-STUDY-002: Rozpoczęcie sesji nauki
+**Warunki wstępne**: Użytkownik jest zalogowany, ma fiszki
+**Kroki**:
+1. Użytkownik wybiera tryb "Nauka"
+2. Klika "Rozpocznij naukę"
+**Oczekiwany rezultat**: 
+- Fiszki są losowo przetasowane
+- Wyświetla się wskaźnik postępu
+- Rozpoczyna się sesja nauki
+
+#### TC-STUDY-003: Nawigacja między fiszkami
+**Warunki wstępne**: Użytkownik jest w trybie przeglądania/nauki
+**Kroki**:
+1. Użytkownik klika "Poprzednia" / "Następna"
+2. Użytkownik używa gestów swipe (na mobile)
+**Oczekiwany rezultat**: 
+- Przejście do poprzedniej/następnej fiszki
+- Fiszka jest automatycznie odwrócona na stronę źródłową
+- Przyciski są odpowiednio włączone/wyłączone
+
+#### TC-STUDY-004: Odwracanie fiszki
+**Warunki wstępne**: Użytkownik przegląda fiszkę
+**Kroki**:
+1. Użytkownik klika na fiszkę lub przycisk "Odwróć"
+**Oczekiwany rezultat**: 
+- Fiszka odwraca się, pokazując translation
+- Możliwość ponownego odwrócenia
+
+#### TC-STUDY-005: Pusta lista fiszek
+**Warunki wstępne**: Użytkownik jest zalogowany, nie ma fiszek
+**Kroki**:
+1. Użytkownik przechodzi na `/study`
+**Oczekiwany rezultat**: 
+- Wyświetlenie komunikatu "Brak fiszek"
+- Wyświetlenie przycisku "Utwórz pierwszą fiszkę"
+
+### 4.4 Obsługa Błędów
+
+#### TC-ERROR-001: Błąd sieciowy
+**Warunki wstępne**: Użytkownik jest zalogowany
+**Kroki**:
+1. Symulacja utraty połączenia sieciowego
+2. Użytkownik próbuje wykonać operację (np. utworzyć fiszkę)
+**Oczekiwany rezultat**: 
+- Wyświetlenie komunikatu błędu
+- Możliwość ponowienia operacji (retry)
+
+#### TC-ERROR-002: Timeout requestu
+**Warunki wstępne**: Użytkownik jest zalogowany
+**Kroki**:
+1. Symulacja długiego czasu odpowiedzi API
+**Oczekiwany rezultat**: 
+- Wyświetlenie stanu ładowania
+- Po timeout: wyświetlenie komunikatu błędu
+
+#### TC-ERROR-003: Błąd walidacji
+**Warunki wstępne**: Użytkownik jest zalogowany
+**Kroki**:
+1. Użytkownik wprowadza nieprawidłowe dane (np. UUID, długość tekstu)
+**Oczekiwany rezultat**: 
+- Wyświetlenie szczegółowego komunikatu błędu walidacji
+- Wskazanie pola z błędem
+
+## 5. Środowisko Testowe
+
+### 5.1 Środowiska Testowe
+
+#### 5.1.1 Środowisko Lokalne (Development)
+- **System operacyjny**: Windows 10/11, macOS, Linux
+- **Node.js**: wersja zgodna z wymaganiami projektu
+- **Baza danych**: Lokalna instancja Supabase (Docker)
+- **Przeglądarki**: Chrome, Firefox, Safari, Edge (najnowsze wersje)
+- **Narzędzia**: VS Code, Git
+
+#### 5.1.2 Środowisko Testowe (Staging)
+- **Hosting**: DigitalOcean (Docker container)
+- **Baza danych**: Supabase (testowa instancja)
+- **URL**: [do uzupełnienia]
+- **Dane testowe**: Zbiór testowych użytkowników i fiszek
+
+#### 5.1.3 Środowisko Produkcyjne (Production)
+- **Hosting**: DigitalOcean (Docker container)
+- **Baza danych**: Supabase (produkcyjna instancja)
+- **URL**: [do uzupełnienia]
+- **Uwaga**: Testy na produkcji tylko w wyjątkowych przypadkach (smoke tests)
+
+### 5.2 Konfiguracja Środowiska
+
+#### 5.2.1 Zmienne Środowiskowe
+- `SUPABASE_URL`: URL instancji Supabase
+- `SUPABASE_KEY`: Klucz anon Supabase
+- `NODE_ENV`: środowisko (development, staging, production)
+
+#### 5.2.2 Dane Testowe
+- **Użytkownicy testowi**: 
+  - test-user-1@example.com
+  - test-user-2@example.com
+- **Fiszki testowe**: Zbiór fiszek o różnych długościach i zawartości
+- **Scenariusze brzegowe**: Puste fiszki, bardzo długie teksty, znaki specjalne
+
+## 6. Narzędzia do Testowania
+
+### 6.1 Testy Jednostkowe i Integracyjne
+
+#### 6.1.1 Framework Testowy
+- **Vitest**: Główny framework testowy (zalecany dla projektów Astro/Vite)
+  - Alternatywa: Jest (jeśli zespół preferuje)
+- **React Testing Library**: Testy komponentów React
+- **@testing-library/user-event**: Symulacja interakcji użytkownika
+
+#### 6.1.2 Mockowanie
+- **MSW (Mock Service Worker)**: Mockowanie requestów HTTP
+- **vi.mock()** (Vitest): Mockowanie modułów
+- **@supabase/supabase-js mocks**: Mockowanie klienta Supabase
+
+### 6.2 Testy End-to-End
+
+#### 6.2.1 Framework E2E
+- **Playwright**: Rekomendowany framework E2E
+  - Wsparcie dla wielu przeglądarek
+  - Automatyczne screenshoty i nagrania
+  - Wbudowane narzędzia do debugowania
+- Alternatywa: **Cypress** (jeśli zespół preferuje)
+
+#### 6.2.2 Konfiguracja Playwright
+```typescript
+// playwright.config.ts (przykład)
+export default defineConfig({
+  testDir: './e2e',
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: 'html',
+  use: {
+    baseURL: 'http://localhost:4321',
+    trace: 'on-first-retry',
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+  ],
+});
+```
+
+### 6.3 Testy Wydajnościowe
+
+#### 6.3.1 Narzędzia
+- **Lighthouse CI**: Automatyczne testy wydajności
+- **k6**: Testy obciążeniowe API
+- **WebPageTest**: Testy wydajności stron
+- **Chrome DevTools Performance**: Profilowanie wydajności
+
+### 6.4 Testy Bezpieczeństwa
+
+#### 6.4.1 Narzędzia
+- **OWASP ZAP**: Automatyczne skanowanie podatności
+- **Snyk**: Analiza zależności pod kątem podatności
+- **npm audit**: Sprawdzanie podatności w pakietach npm
+
+### 6.5 Narzędzia Pomocnicze
+
+#### 6.5.1 Coverage
+- **c8** lub **@vitest/coverage-v8**: Pokrycie kodu testami
+- **Istanbul**: Alternatywa dla coverage
+
+#### 6.5.2 Linting i Formatowanie
+- **ESLint**: Linting kodu (już skonfigurowany)
+- **Prettier**: Formatowanie kodu (już skonfigurowany)
+
+#### 6.5.3 CI/CD
+- **GitHub Actions**: Automatyzacja testów w pipeline'ie CI/CD
+
+## 7. Harmonogram Testów
+
+### 7.1 Fazy Testowania
+
+#### 7.1.1 Faza 1: Testy Jednostkowe (Tygodnie 1-2)
+- **Cel**: Weryfikacja poprawności pojedynczych funkcji i komponentów
+- **Zakres**: 
+  - Funkcje utylitarne (validation.ts, error-handler.ts)
+  - Serwisy (flashcards.service.ts)
+  - React hooks (useStudyView.ts)
+  - Komponenty React
+- **Kryterium zakończenia**: 80% pokrycia kodu testami jednostkowymi
+
+#### 7.1.2 Faza 2: Testy Integracyjne (Tydzień 3)
+- **Cel**: Weryfikacja współpracy między modułami
+- **Zakres**:
+  - Integracja API z bazą danych
+  - Integracja autentykacji
+  - Integracja frontend-backend
+- **Kryterium zakończenia**: Wszystkie scenariusze integracyjne przeszły pomyślnie
+
+#### 7.1.3 Faza 3: Testy End-to-End (Tydzień 4)
+- **Cel**: Weryfikacja pełnych ścieżek użytkownika
+- **Zakres**:
+  - Scenariusze użytkownika (sekcja 4.3)
+  - Testy regresyjne
+- **Kryterium zakończenia**: Wszystkie krytyczne scenariusze E2E przeszły pomyślnie
+
+#### 7.1.4 Faza 4: Testy Bezpieczeństwa i Wydajności (Tydzień 5)
+- **Cel**: Weryfikacja bezpieczeństwa i wydajności
+- **Zakres**:
+  - Testy bezpieczeństwa (sekcja 3.4)
+  - Testy wydajnościowe (sekcja 3.5)
+- **Kryterium zakończenia**: Brak krytycznych problemów bezpieczeństwa, wydajność w akceptowalnych zakresach
+
+#### 7.1.5 Faza 5: Testy Użyteczności (Tydzień 6)
+- **Cel**: Weryfikacja użyteczności i dostępności
+- **Zakres**:
+  - Testy użyteczności (sekcja 3.6)
+  - Testy dostępności (a11y)
+- **Kryterium zakończenia**: Aplikacja spełnia standardy użyteczności
+
+### 7.2 Testy Ciągłe
+
+#### 7.2.1 Testy w Pipeline CI/CD
+- **Przy każdym commit**: Testy jednostkowe i linting
+- **Przy każdym PR**: Testy jednostkowe + integracyjne + E2E (smoke tests)
+- **Przy każdym merge do main**: Pełna bateria testów
+- **Przed release'em**: Pełna bateria testów + testy regresyjne
+
+#### 7.2.2 Testy Regresyjne
+- **Częstotliwość**: Po każdej większej zmianie, przed każdym release'em
+- **Zakres**: Wszystkie krytyczne scenariusze użytkownika
+
+## 8. Kryteria Akceptacji Testów
+
+### 8.1 Kryteria Ogólne
+
+#### 8.1.1 Pokrycie Kodem
+- **Minimum 80%** pokrycia kodu testami jednostkowymi
+- **100%** pokrycia krytycznych funkcji (autentykacja, CRUD, bezpieczeństwo)
+
+#### 8.1.2 Wskaźniki Jakości
+- **0** krytycznych błędów (Critical)
+- **Maksymalnie 5** błędów wysokiego priorytetu (High)
+- **Wszystkie** testy jednostkowe i integracyjne przechodzą
+- **Minimum 95%** testów E2E przechodzi
+
+### 8.2 Kryteria Specyficzne dla Modułów
+
+#### 8.2.1 Autentykacja
+- ✅ Wszystkie endpointy autentykacji działają poprawnie
+- ✅ Middleware poprawnie chroni zasoby
+- ✅ Sesje użytkownika są prawidłowo zarządzane
+- ✅ Brak możliwości obejścia autoryzacji
+
+#### 8.2.2 Zarządzanie Fiszkami
+- ✅ Wszystkie operacje CRUD działają poprawnie
+- ✅ Walidacja danych działa we wszystkich przypadkach
+- ✅ Row Level Security działa poprawnie
+- ✅ Optymistyczne aktualizacje działają i rollback w przypadku błędów
+
+#### 8.2.3 Tryby Nauki
+- ✅ Przełączanie między trybami działa płynnie
+- ✅ Sesja nauki losuje fiszki poprawnie
+- ✅ Nawigacja między fiszkami działa bez błędów
+- ✅ Odwracanie fiszek działa poprawnie
+
+#### 8.2.4 Wydajność
+- ✅ Czas odpowiedzi API < 500ms (95 percentyl)
+- ✅ Czas ładowania strony < 2s (First Contentful Paint)
+- ✅ Aplikacja obsługuje minimum 50 równoczesnych użytkowników
+
+#### 8.2.5 Bezpieczeństwo
+- ✅ Brak podatności krytycznych i wysokich (OWASP Top 10)
+- ✅ RLS działa poprawnie - użytkownicy nie mogą uzyskać dostępu do danych innych użytkowników
+- ✅ Wszystkie dane wejściowe są walidowane
+- ✅ Brak możliwości SQL Injection, XSS, CSRF
+
+### 8.3 Kryteria Akceptacji dla Release'u
+
+#### 8.3.1 Przed Release'em
+- ✅ Wszystkie testy automatyczne przechodzą
+- ✅ Code review zostało zakończone
+- ✅ Dokumentacja jest aktualna
+- ✅ Testy bezpieczeństwa nie wykazały krytycznych problemów
+- ✅ Testy wydajnościowe są w akceptowalnych zakresach
+
+#### 8.3.2 Po Release'ie
+- ✅ Smoke tests na produkcji przeszły pomyślnie
+- ✅ Monitoring nie wykazuje anomalii
+- ✅ Brak zgłoszeń krytycznych błędów w pierwszej dobie
+
+## 9. Role i Odpowiedzialności w Procesie Testowania
+
+### 9.1 Zespół Testowy
+
+#### 9.1.1 QA Engineer (Lead)
+- **Odpowiedzialności**:
+  - Tworzenie i utrzymanie planu testów
+  - Koordynacja procesu testowania
+  - Analiza wyników testów
+  - Raportowanie statusu testów
+  - Priorytetyzacja błędów
+
+#### 9.1.2 QA Engineer (Automation)
+- **Odpowiedzialności**:
+  - Tworzenie i utrzymanie testów automatycznych
+  - Konfiguracja narzędzi testowych
+  - Optymalizacja testów
+  - Integracja testów z CI/CD
+
+#### 9.1.3 QA Engineer (Manual)
+- **Odpowiedzialności**:
+  - Testy manualne (użyteczność, eksploracyjne)
+  - Testy w różnych przeglądarkach i urządzeniach
+  - Weryfikacja naprawionych błędów
+  - Testy regresyjne
+
+### 9.2 Zespół Deweloperski
+
+#### 9.2.1 Backend Developer
+- **Odpowiedzialności**:
+  - Tworzenie testów jednostkowych dla API
+  - Wsparcie w testach integracyjnych
+  - Naprawa błędów związanych z backendem
+
+#### 9.2.2 Frontend Developer
+- **Odpowiedzialności**:
+  - Tworzenie testów jednostkowych dla komponentów
+  - Wsparcie w testach E2E
+  - Naprawa błędów związanych z frontendem
+
+#### 9.2.3 DevOps Engineer
+- **Odpowiedzialności**:
+  - Konfiguracja środowisk testowych
+  - Konfiguracja CI/CD pipeline
+  - Monitorowanie wydajności
+
+### 9.3 Inne Role
+
+#### 9.3.1 Product Owner
+- **Odpowiedzialności**:
+  - Akceptacja kryteriów testowych
+  - Priorytetyzacja funkcjonalności do testowania
+  - Akceptacja release'u
+
+#### 9.3.2 Security Specialist (opcjonalnie)
+- **Odpowiedzialności**:
+  - Przeprowadzenie testów bezpieczeństwa
+  - Analiza podatności
+  - Rekomendacje dotyczące bezpieczeństwa
+
+## 10. Procedury Raportowania Błędów
+
+### 10.1 Szablon Raportu Błędu
+
+#### 10.1.1 Wymagane Informacje
+- **Tytuł**: Krótki, opisowy tytuł błędu
+- **Priorytet**: Critical, High, Medium, Low
+- **Kategoria**: Security, Functional, Performance, UI/UX, Compatibility
+- **Środowisko**: Development, Staging, Production
+- **Kroki reprodukcji**: Szczegółowe kroki prowadzące do błędu
+- **Oczekiwane zachowanie**: Jak aplikacja powinna się zachowywać
+- **Rzeczywiste zachowanie**: Jak aplikacja się zachowuje
+- **Załączniki**: Screenshoty, logi, nagrania
+- **Dodatkowe informacje**: Wersja przeglądarki, system operacyjny, etc.
+
+### 10.2 Priorytetyzacja Błędów
+
+#### 10.2.1 Critical (Krytyczny)
+- **Definicja**: Błąd uniemożliwiający użycie aplikacji lub powodujący utratę danych
+- **Czas naprawy**: Natychmiast (w ciągu 24h)
+- **Przykłady**: 
+  - Nie można się zalogować
+  - Utrata danych użytkownika
+  - Błąd bezpieczeństwa umożliwiający dostęp do danych innych użytkowników
+
+#### 10.2.2 High (Wysoki)
+- **Definicja**: Błąd znacząco wpływający na funkcjonalność, ale z obejściem
+- **Czas naprawy**: W ciągu 1 tygodnia
+- **Przykłady**:
+  - Nie można utworzyć fiszki (z obejściem)
+  - Błąd w wyświetlaniu danych
+  - Problemy z wydajnością wpływające na UX
+
+#### 10.2.3 Medium (Średni)
+- **Definicja**: Błąd wpływający na funkcjonalność, ale nie blokujący
+- **Czas naprawy**: W ciągu 2 tygodni
+- **Przykłady**:
+  - Drobne problemy z UI
+  - Nieprawidłowe komunikaty błędów
+  - Problemy z kompatybilnością w starszych przeglądarkach
+
+#### 10.2.4 Low (Niski)
+- **Definicja**: Drobne problemy, sugestie ulepszeń
+- **Czas naprawy**: W ciągu 1 miesiąca lub w następnej iteracji
+- **Przykłady**:
+  - Drobne problemy kosmetyczne
+  - Sugestie ulepszeń UX
+  - Problemy z dokumentacją
+
+### 10.3 Workflow Raportowania
+
+#### 10.3.1 Proces
+1. **Zgłoszenie błędu**: QA Engineer tworzy ticket w systemie śledzenia (np. GitHub Issues, Jira)
+2. **Weryfikacja**: QA Lead weryfikuje i priorytetyzuje błąd
+3. **Przypisanie**: Błąd jest przypisany do odpowiedniego developera
+4. **Naprawa**: Developer naprawia błąd i tworzy PR
+5. **Weryfikacja**: QA Engineer weryfikuje naprawę
+6. **Zamknięcie**: Po pozytywnej weryfikacji błąd jest zamykany
+
+#### 10.3.2 Komunikacja
+- **Krytyczne błędy**: Natychmiastowa komunikacja (Slack, email, telefon)
+- **Wysokie błędy**: Komunikacja w ciągu 4h
+- **Średnie/Niskie błędy**: Komunikacja w ciągu 1 dnia roboczego
+
+### 10.4 Metryki i Raportowanie
+
+#### 10.4.1 Metryki do Śledzenia
+- **Liczba zgłoszonych błędów**: Całkowita, wg priorytetu, wg kategorii
+- **Czas naprawy**: Średni czas od zgłoszenia do naprawy
+- **Wskaźnik naprawionych błędów**: % błędów naprawionych w terminie
+- **Wskaźnik ponownego otwarcia**: % błędów, które zostały ponownie otwarte
+
+#### 10.4.2 Raporty
+- **Dzienny raport testów**: Status testów, nowe błędy, naprawione błędy
+- **Tygodniowy raport**: Podsumowanie tygodnia, trendy, metryki
+- **Raport przed release'em**: Podsumowanie wszystkich testów i status gotowości do release'u
+
+## 11. Dodatkowe Uwagi
+
+### 11.1 Testy w Kontekście Astro
+- **SSR vs SSG**: Weryfikacja, że strony są poprawnie renderowane po stronie serwera
+- **Islands Architecture**: Weryfikacja, że komponenty React są poprawnie hydratowane
+- **Routing**: Weryfikacja, że routing Astro działa poprawnie
+
+### 11.2 Testy w Kontekście Supabase
+- **RLS Policies**: Weryfikacja, że polityki RLS są poprawnie skonfigurowane
+- **Triggers**: Weryfikacja, że triggery działają poprawnie (np. automatyczne ustawianie user_id)
+- **Migrations**: Weryfikacja, że migracje działają poprawnie i są odwracalne
+
+### 11.3 Testy w Kontekście React 19
+- **Nowe API**: Weryfikacja użycia nowych funkcji React 19 (jeśli zastosowane)
+- **Hydration**: Weryfikacja, że hydratacja działa poprawnie
+- **Concurrent Features**: Weryfikacja użycia concurrent features (jeśli zastosowane)
+
+### 11.4 Testy Accessibility (a11y)
+- **WCAG 2.1**: Weryfikacja zgodności z wytycznymi WCAG 2.1 (poziom AA minimum)
+- **Nawigacja klawiaturą**: Wszystkie funkcje dostępne z klawiatury
+- **Czytniki ekranu**: Testy z czytnikami ekranu (NVDA, JAWS, VoiceOver)
+- **Kontrast kolorów**: Weryfikacja kontrastu tekstu
+
+## 12. Podsumowanie
+
+Niniejszy plan testów stanowi kompleksowy przewodnik po procesie testowania aplikacji do nauki z fiszkami. Plan powinien być traktowany jako dokument żywy, który jest aktualizowany w miarę rozwoju projektu i pojawiania się nowych wymagań.
+
+Kluczowe elementy planu:
+- **Szczegółowe scenariusze testowe** dla wszystkich kluczowych funkcjonalności
+- **Różnorodne typy testów** zapewniające kompleksowe pokrycie
+- **Jasne kryteria akceptacji** umożliwiające obiektywną ocenę jakości
+- **Zdefiniowane role i odpowiedzialności** zapewniające efektywny proces testowania
+- **Procedury raportowania** umożliwiające skuteczne zarządzanie błędami
+
+Plan testów powinien być regularnie przeglądany i aktualizowany w oparciu o:
+- Zmiany w wymaganiach
+- Nowe funkcjonalności
+- Wnioski z poprzednich cykli testowych
+- Zmiany w stosie technologicznym
+
+---
+
+**Wersja dokumentu**: 1.0  
+**Data utworzenia**: [Data]  
+**Ostatnia aktualizacja**: [Data]  
+**Autor**: QA Team  
+**Status**: Draft / Approved / Final
