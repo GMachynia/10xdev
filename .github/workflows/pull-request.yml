@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
 
 jobs:
   lint:
@@ -111,6 +114,7 @@ jobs:
           path: coverage/
 
       - name: Create status comment
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
           script: |
