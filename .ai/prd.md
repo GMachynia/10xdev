@@ -17,6 +17,7 @@ Aplikacja webowa (responsive design), dostępna przez przeglądarkę internetow�
 ### 1.5 Model biznesowy
 Wersja MVP jest całkowicie darmowa, bez limitów na liczbę fiszek i generowań. Brak monetyzacji w pierwszej wersji produktu.
 
+
 ## 2. Problem użytkownika
 
 ### 2.1 Główny problem
@@ -71,9 +72,12 @@ Aplikacja rozwiązuje problem poprzez:
 - Karty można przesuwać na bok (swipe gesture) w celu nawigacji
 
 #### 3.2.2 Organizacja fiszek
-- Wszystkie fiszki są przechowywane w jednym "koszu" (brak organizacji w zestawy/kategorie)
-- Brak możliwości tagowania lub kategoryzowania fiszek
-- Prosta, płaska struktura danych
+- Fiszki mogą być organizowane w kolekcje (zestawy)
+- Użytkownik może tworzyć, edytować i usuwać kolekcje
+- Kolekcje mają nazwę i opis
+- Fiszki mogą być przypisane do kolekcji
+- Funkcjonalność kolekcji jest dostępna tylko dla zalogowanych użytkowników
+- Użytkownik może przywrócić kolekcję do poprzedniej wersji (pending changes)
 
 ### 3.3 Edycja i usuwanie fiszek
 
@@ -99,19 +103,34 @@ Aplikacja rozwiązuje problem poprzez:
 ### 3.5 System kont użytkowników
 
 #### 3.5.1 Rejestracja
-- Minimalistyczny proces rejestracji wymagający tylko loginu i hasła
-- Brak weryfikacji email
-- Brak dodatkowych pól w formularzu rejestracji
+- Proces rejestracji wymagający adresu email, hasła i potwierdzenia hasła
+- Rejestracja odbywa się na dedykowanej stronie
+- Brak weryfikacji email w MVP
+- Walidacja formatu email i siły hasła
 
 #### 3.5.2 Logowanie
-- Logowanie za pomocą loginu i hasła
+- Logowanie za pomocą adresu email i hasła
+- Logowanie odbywa się na dedykowanej stronie
 - Sesja użytkownika jest utrzymywana po zalogowaniu
 - Możliwość wylogowania
+- Przycisk logowania dostępny w prawym górnym rogu interfejsu
 
-#### 3.5.3 Przechowywanie danych
+#### 3.5.3 Odzyskiwanie hasła
+- Użytkownik może zresetować hasło poprzez formularz odzyskiwania hasła
+- Reset hasła wymaga podania adresu email
+- Link do resetu hasła jest wysyłany na adres email użytkownika
+- Użytkownik może ustawić nowe hasło poprzez link z emaila
+
+#### 3.5.4 Przechowywanie danych
 - Wszystkie fiszki są przechowywane na koncie użytkownika
 - Fiszki są dostępne tylko dla użytkownika, który je utworzył
 - Brak możliwości eksportu danych w MVP
+
+#### 3.5.5 Dostęp bez logowania
+- Użytkownik MOŻE korzystać z tworzenia fiszek "ad-hoc" bez logowania się do systemu
+- Fiszki utworzone bez logowania są przechowywane lokalnie (localStorage) i nie są synchronizowane
+- Użytkownik NIE MOŻE korzystać z funkcji Kolekcji bez logowania się do systemu
+- Próba dostępu do kolekcji bez logowania przekierowuje użytkownika do strony logowania
 
 ### 3.6 Obsługa błędów
 
@@ -123,6 +142,8 @@ Aplikacja rozwiązuje problem poprzez:
 #### 3.6.2 Walidacja danych
 - Walidacja długości tekstu (maksymalnie 200 znaków)
 - Walidacja wymaganych pól podczas rejestracji i logowania
+- Walidacja formatu adresu email
+- Walidacja zgodności hasła i potwierdzenia hasła podczas rejestracji
 - Walidacja formatu danych przed zapisaniem fiszki
 
 ### 3.7 Interfejs użytkownika
@@ -138,7 +159,9 @@ Aplikacja rozwiązuje problem poprzez:
 - Przycisk "Accept" do akceptacji fiszki
 - Karty z efektem obrotu przy kliknięciu
 - Przyciski do edycji i usuwania fiszek
-- Formularz rejestracji i logowania
+- Formularz rejestracji i logowania na dedykowanych stronach
+- Przycisk logowania/wylogowania w prawym górnym rogu (Layout.astro)
+- Interfejs zarządzania kolekcjami fiszek
 
 ## 4. Granice produktu
 
@@ -155,10 +178,10 @@ Aplikacja rozwiązuje problem poprzez:
 - Import z innych platform edukacyjnych
 
 #### 4.1.3 Organizacja i współdzielenie
-- Organizowanie fiszek w zestawy/kategorie/decki
 - Tagowanie fiszek
 - Współdzielenie zestawów fiszek między użytkownikami
 - Funkcje społecznościowe
+- Uwaga: Organizowanie fiszek w kolekcje (zestawy) jest dostępne w MVP (US-003)
 
 #### 4.1.4 Integracje
 - Integracje z innymi platformami edukacyjnymi
@@ -181,9 +204,9 @@ Aplikacja rozwiązuje problem poprzez:
 - W MVP tylko aplikacja webowa z responsive design
 
 #### 4.1.8 Weryfikacja i bezpieczeństwo
-- Weryfikacja email podczas rejestracji
+- Weryfikacja email podczas rejestracji (brak w MVP)
 - Dwuskładnikowe uwierzytelnianie
-- Reset hasła przez email
+- Uwaga: Reset hasła przez email jest dostępny w MVP (US-004)
 
 #### 4.1.9 Statystyki i analityka
 - Zaawansowane statystyki nauki
@@ -217,13 +240,14 @@ Opis: Jako nowy użytkownik chcę zarejestrować konto, aby móc korzystać z ap
 
 Kryteria akceptacji:
 - Użytkownik może wejść na stronę rejestracji
-- Formularz rejestracji zawiera tylko pola: login i hasło
-- Użytkownik może wprowadzić login (minimalna długość: 3 znaki)
+- Formularz rejestracji zawiera pola: adres email, hasło i potwierdzenie hasła
+- Użytkownik może wprowadzić adres email (walidacja formatu email)
 - Użytkownik może wprowadzić hasło (minimalna długość: 6 znaków)
+- Użytkownik musi potwierdzić hasło (hasła muszą się zgadzać)
 - Po wypełnieniu formularza i kliknięciu przycisku rejestracji, konto jest tworzone
 - Po pomyślnej rejestracji użytkownik jest automatycznie zalogowany
-- W przypadku błędu (np. login już istnieje) wyświetlany jest odpowiedni komunikat
-- Brak wymagania weryfikacji email
+- W przypadku błędu (np. email już istnieje, hasła się nie zgadzają) wyświetlany jest odpowiedni komunikat
+- Brak wymagania weryfikacji email w MVP
 
 ### US-002: Logowanie użytkownika
 Tytuł: Logowanie do konta
@@ -232,27 +256,62 @@ Opis: Jako zarejestrowany użytkownik chcę zalogować się do swojego konta, ab
 
 Kryteria akceptacji:
 - Użytkownik może wejść na stronę logowania
-- Formularz logowania zawiera pola: login i hasło
-- Użytkownik może wprowadzić swój login
+- Użytkownik może wejść na stronę logowania poprzez przycisk w prawym górnym rogu interfejsu
+- Formularz logowania zawiera pola: adres email i hasło
+- Użytkownik może wprowadzić swój adres email
 - Użytkownik może wprowadzić swoje hasło
 - Po wprowadzeniu poprawnych danych i kliknięciu przycisku logowania, użytkownik jest zalogowany
 - Po zalogowaniu użytkownik jest przekierowany do głównego widoku aplikacji
-- W przypadku nieprawidłowych danych wyświetlany jest komunikat błędu: "Nieprawidłowy login lub hasło"
+- W przypadku nieprawidłowych danych wyświetlany jest komunikat błędu: "Nieprawidłowy email lub hasło"
 - Sesja użytkownika jest utrzymywana po zalogowaniu
 
-### US-003: Wylogowanie użytkownika
+### US-003: Kolekcje fiszek
+Tytuł: Kolekcje fiszek
+
+Opis: Jako użytkownik chcę móc zapisywać i edytować zestawy fiszek w kolekcjach, aby szybko organizować i wykorzystywać sprawdzone zestawy fiszek w różnych sesjach nauki.
+
+Kryteria akceptacji:
+- Użytkownik może zapisać aktualny zestaw fiszek jako kolekcję (nazwa, opis, lista fiszek)
+- Użytkownik może aktualizować kolekcję (zmiana nazwy, opisu, dodawanie/usuwanie fiszek)
+- Użytkownik może usunąć kolekcję
+- Użytkownik może przywrócić kolekcję do poprzedniej wersji (pending changes)
+- Funkcjonalność kolekcji nie jest dostępna bez logowania się do systemu
+- Próba dostępu do kolekcji bez logowania przekierowuje użytkownika do strony logowania
+- Kolekcje są przechowywane na koncie użytkownika i dostępne po ponownym zalogowaniu
+
+### US-004: Bezpieczny dostęp i uwierzytelnianie
+Tytuł: Bezpieczny dostęp
+
+Opis: Jako użytkownik chcę mieć możliwość rejestracji i logowania się do systemu w sposób zapewniający bezpieczeństwo moich danych, z możliwością odzyskania hasła.
+
+Kryteria akceptacji:
+- Logowanie i rejestracja odbywają się na dedykowanych stronach
+- Logowanie wymaga podania adresu email i hasła
+- Rejestracja wymaga podania adresu email, hasła i potwierdzenia hasła
+- Użytkownik MOŻE korzystać z tworzenia fiszek "ad-hoc" bez logowania się do systemu (fiszki przechowywane lokalnie)
+- Użytkownik NIE MOŻE korzystać z funkcji Kolekcji bez logowania się do systemu (US-003)
+- Użytkownik może logować się do systemu poprzez przycisk w prawym górnym rogu
+- Użytkownik może się wylogować z systemu poprzez przycisk w prawym górnym rogu w głównym Layout.astro
+- Nie korzystamy z zewnętrznych serwisów logowania (np. Google, GitHub)
+- Odzyskiwanie hasła jest możliwe poprzez formularz resetu hasła
+- Użytkownik może wprowadzić swój adres email w formularzu resetu hasła
+- Po wprowadzeniu emaila, link do resetu hasła jest wysyłany na adres email użytkownika
+- Użytkownik może ustawić nowe hasło poprzez link otrzymany w emailu
+- Link resetu hasła ma ograniczony czas ważności (np. 24 godziny)
+
+### US-005: Wylogowanie użytkownika
 Tytuł: Wylogowanie z konta
 
 Opis: Jako zalogowany użytkownik chcę móc wylogować się z konta, aby zabezpieczyć swoje dane na współdzielonym urządzeniu.
 
 Kryteria akceptacji:
-- Zalogowany użytkownik widzi przycisk/opcję wylogowania
+- Zalogowany użytkownik widzi przycisk/opcję wylogowania w prawym górnym rogu w Layout.astro
 - Po kliknięciu wylogowania użytkownik jest wylogowany
 - Po wylogowaniu użytkownik jest przekierowany do strony logowania
 - Sesja użytkownika jest zakończona
 - Po wylogowaniu użytkownik nie ma dostępu do swoich fiszek bez ponownego zalogowania
 
-### US-004: Wklejanie tekstu do tworzenia fiszek
+### US-006: Wklejanie tekstu do tworzenia fiszek
 Tytuł: Wklejanie tekstu źródłowego
 
 Opis: Jako zalogowany użytkownik chcę wkleić tekst, aby móc z niego utworzyć fiszki.
@@ -265,7 +324,7 @@ Kryteria akceptacji:
 - Po wklejeniu tekstu, tekst jest wyświetlany w interaktywnym obszarze poniżej pola tekstowego
 - Każde słowo w wyświetlonym tekście jest klikalne
 
-### US-005: Tworzenie fiszki z całego tekstu
+### US-007: Tworzenie fiszki z całego tekstu
 Tytuł: Utworzenie fiszki z całego wklejonego tekstu
 
 Opis: Jako użytkownik chcę utworzyć fiszkę z całego wklejonego tekstu, aby móc uczyć się całych fraz lub zdań.
@@ -280,7 +339,7 @@ Kryteria akceptacji:
 - Po zapisaniu fiszka jest dostępna w liście fiszek użytkownika
 - Tekst źródłowy pozostaje w polu tekstowym (nie jest usuwany)
 
-### US-006: Tworzenie fiszki z pojedynczego słowa
+### US-008: Tworzenie fiszki z pojedynczego słowa
 Tytuł: Utworzenie fiszki z pojedynczego słowa poprzez kliknięcie
 
 Opis: Jako użytkownik chcę kliknąć na pojedyncze słowo w tekście, aby utworzyć z niego fiszkę.
@@ -296,7 +355,7 @@ Kryteria akceptacji:
 - Po zapisaniu fiszka jest dostępna w liście fiszek
 - Słowo pozostaje klikalne, można utworzyć kolejną fiszkę z tego samego słowa
 
-### US-007: Tworzenie wielu fiszek z różnych słów
+### US-009: Tworzenie wielu fiszek z różnych słów
 Tytuł: Utworzenie wielu fiszek poprzez kolejne kliknięcia na różne słowa
 
 Opis: Jako użytkownik chcę utworzyć wiele fiszek z różnych słów w tekście poprzez kolejne kliknięcia.
@@ -309,7 +368,7 @@ Kryteria akceptacji:
 - Każda fiszka jest niezależna i zapisywana osobno
 - Tekst źródłowy pozostaje dostępny do dalszego tworzenia fiszek
 
-### US-008: Wyświetlanie fiszek jako karty
+### US-010: Wyświetlanie fiszek jako karty
 Tytuł: Przeglądanie fiszek w formie kart
 
 Opis: Jako użytkownik chcę przeglądać moje fiszki w formie kart, aby móc je łatwo przeglądać i uczyć się.
@@ -321,7 +380,7 @@ Kryteria akceptacji:
 - Karty mają czytelny design i są łatwe do odczytania
 - Wszystkie fiszki użytkownika są dostępne do przeglądania
 
-### US-009: Obrót karty i wyświetlanie translacji
+### US-011: Obrót karty i wyświetlanie translacji
 Tytuł: Odwrócenie karty, aby zobaczyć translację
 
 Opis: Jako użytkownik chcę kliknąć w kartę, aby zobaczyć translację na rewersie.
@@ -333,7 +392,7 @@ Kryteria akceptacji:
 - Kliknięcie ponownie obraca kartę z powrotem do awersu
 - Efekt obrotu jest płynny i wizualnie przyjemny
 
-### US-010: Przesuwanie kart na bok (swipe)
+### US-012: Przesuwanie kart na bok (swipe)
 Tytuł: Nawigacja między fiszkami poprzez przesuwanie
 
 Opis: Jako użytkownik chcę przesuwać karty na bok, aby przejść do następnej fiszki.
@@ -345,7 +404,7 @@ Kryteria akceptacji:
 - Przesunięcie karty jest płynne i responsywne
 - Po przesunięciu ostatniej karty, wyświetlana jest pierwsza (cykliczna nawigacja) lub komunikat o zakończeniu
 
-### US-011: System powtórek w losowej kolejności
+### US-013: System powtórek w losowej kolejności
 Tytuł: Przeglądanie fiszek w losowej kolejności
 
 Opis: Jako użytkownik chcę przeglądać moje fiszki w losowej kolejności, aby uczyć się bez przewidywalnego wzorca.
@@ -357,7 +416,7 @@ Kryteria akceptacji:
 - Po przejściu przez wszystkie fiszki, cykl się resetuje i rozpoczyna się od nowa w nowej losowej kolejności
 - Użytkownik widzi informację o liczbie pozostałych fiszek w sesji (opcjonalnie)
 
-### US-012: Edycja treści i translacji fiszki
+### US-014: Edycja treści i translacji fiszki
 Tytuł: Zmiana treści źródłowej i translacji istniejącej fiszki
 
 Opis: Jako użytkownik chcę edytować zarówno treść źródłową, jak i translację fiszki, aby poprawić lub zaktualizować informacje.
@@ -373,7 +432,7 @@ Kryteria akceptacji:
 - Po zapisaniu zmian, zaktualizowana treść źródłowa i translacja są widoczne na karcie
 - Zmiany są zapisywane natychmiast po kliknięciu "Zapisz" lub podobnego przycisku
 
-### US-013: Usuwanie fiszki
+### US-015: Usuwanie fiszki
 Tytuł: Usunięcie niepotrzebnej fiszki
 
 Opis: Jako użytkownik chcę usunąć fiszkę, której już nie potrzebuję.
@@ -386,7 +445,7 @@ Kryteria akceptacji:
 - Usunięta fiszka znika z listy i nie jest już dostępna
 - Brak możliwości przywrócenia usuniętej fiszki w MVP
 
-### US-014: Walidacja długości tekstu
+### US-016: Walidacja długości tekstu
 Tytuł: Sprawdzanie maksymalnej długości tekstu
 
 Opis: Jako system chcę walidować długość wklejanego tekstu, aby zapewnić zgodność z limitami.
@@ -398,7 +457,7 @@ Kryteria akceptacji:
 - Komunikat błędu jest wyświetlany natychmiast po próbie wklejenia zbyt długiego tekstu
 - Pole tekstowe może wyświetlać licznik znaków (opcjonalnie)
 
-### US-015: Obsługa błędów API
+### US-017: Obsługa błędów API
 Tytuł: Wyświetlanie błędów związanych z integracją AI
 
 Opis: Jako użytkownik chcę otrzymać informację, gdy wystąpi błąd podczas korzystania z funkcji AI lub zapisywania danych.
@@ -410,34 +469,38 @@ Kryteria akceptacji:
 - Komunikaty błędów są czytelne i zrozumiałe dla użytkownika
 - Użytkownik może zamknąć komunikat błędu i spróbować ponownie
 
-### US-016: Walidacja danych logowania
+### US-018: Walidacja danych logowania
 Tytuł: Sprawdzanie poprawności danych podczas logowania
 
 Opis: Jako system chcę walidować dane logowania, aby zapewnić bezpieczeństwo kont użytkowników.
 
 Kryteria akceptacji:
-- System sprawdza, czy pole login nie jest puste
+- System sprawdza, czy pole email nie jest puste
 - System sprawdza, czy pole hasło nie jest puste
+- System sprawdza format adresu email
 - Jeśli któreś pole jest puste, wyświetlany jest komunikat: "Wypełnij wszystkie pola"
-- System sprawdza, czy login i hasło są poprawne
-- W przypadku nieprawidłowych danych wyświetlany jest komunikat: "Nieprawidłowy login lub hasło"
+- Jeśli format email jest nieprawidłowy, wyświetlany jest komunikat: "Nieprawidłowy format email"
+- System sprawdza, czy email i hasło są poprawne
+- W przypadku nieprawidłowych danych wyświetlany jest komunikat: "Nieprawidłowy email lub hasło"
 - Komunikaty błędów są wyświetlane natychmiast po próbie logowania z nieprawidłowymi danymi
 
-### US-017: Walidacja danych rejestracji
+### US-019: Walidacja danych rejestracji
 Tytuł: Sprawdzanie poprawności danych podczas rejestracji
 
 Opis: Jako system chcę walidować dane rejestracji, aby zapewnić poprawność kont użytkowników.
 
 Kryteria akceptacji:
-- System sprawdza, czy login ma co najmniej 3 znaki
+- System sprawdza format adresu email
 - System sprawdza, czy hasło ma co najmniej 6 znaków
-- Jeśli login jest za krótki, wyświetlany jest komunikat: "Login musi mieć co najmniej 3 znaki"
+- System sprawdza, czy hasło i potwierdzenie hasła się zgadzają
+- Jeśli format email jest nieprawidłowy, wyświetlany jest komunikat: "Nieprawidłowy format email"
 - Jeśli hasło jest za krótkie, wyświetlany jest komunikat: "Hasło musi mieć co najmniej 6 znaków"
-- System sprawdza, czy login nie jest już zajęty
-- Jeśli login jest zajęty, wyświetlany jest komunikat: "Ten login jest już zajęty. Wybierz inny"
+- Jeśli hasła się nie zgadzają, wyświetlany jest komunikat: "Hasła nie są identyczne"
+- System sprawdza, czy email nie jest już zajęty
+- Jeśli email jest zajęty, wyświetlany jest komunikat: "Ten email jest już zajęty. Wybierz inny"
 - Komunikaty błędów są wyświetlane natychmiast po próbie rejestracji z nieprawidłowymi danymi
 
-### US-018: Przechowywanie fiszek na koncie użytkownika
+### US-020: Przechowywanie fiszek na koncie użytkownika
 Tytuł: Zapis fiszek przypisanych do konta użytkownika
 
 Opis: Jako zalogowany użytkownik chcę, aby moje fiszki były zapisane na moim koncie i dostępne po ponownym zalogowaniu.
@@ -449,7 +512,7 @@ Kryteria akceptacji:
 - Fiszki są przechowywane w sposób trwały (nie są tracone po zamknięciu przeglądarki)
 - Użytkownik widzi tylko swoje własne fiszki, nie ma dostępu do fiszek innych użytkowników
 
-### US-019: Określanie języka źródłowego i docelowego
+### US-021: Określanie języka źródłowego i docelowego
 Tytuł: Ręczne ustawienie języków dla fiszki
 
 Opis: Jako użytkownik chcę określić język źródłowy i docelowy dla mojej fiszki, ponieważ aplikacja nie wykrywa języka automatycznie.
@@ -462,7 +525,7 @@ Kryteria akceptacji:
 - Brak automatycznego wykrywania języka - użytkownik musi zawsze określić języki ręcznie
 - Języki mogą być różne dla różnych fiszek
 
-### US-020: Tworzenie fiszki bez translacji
+### US-022: Tworzenie fiszki bez translacji
 Tytuł: Utworzenie fiszki z samym tekstem źródłowym
 
 Opis: Jako użytkownik chcę utworzyć fiszkę bez translacji, jeśli chcę dodać ją później lub używać fiszki w inny sposób.
@@ -474,7 +537,7 @@ Kryteria akceptacji:
 - Podczas przeglądania, fiszka bez translacji wyświetla na rewersie informację "Brak translacji" lub pozostaje pusta
 - Użytkownik może później edytować fiszkę i dodać translację
 
-### US-021: Reset cyklu powtórek
+### US-023: Reset cyklu powtórek
 Tytuł: Rozpoczęcie nowego cyklu po przejściu przez wszystkie fiszki
 
 Opis: Jako użytkownik chcę, aby po przejściu przez wszystkie fiszki, cykl powtórek się resetował i rozpoczynał od nowa.
@@ -486,17 +549,18 @@ Kryteria akceptacji:
 - Wszystkie fiszki są ponownie dostępne w nowym cyklu
 - Brak automatycznego rozpoczęcia nowego cyklu - użytkownik musi to zrobić ręcznie (opcjonalnie, w zależności od implementacji)
 
-### US-022: Dostęp do aplikacji bez logowania
+### US-024: Dostęp do aplikacji bez logowania
 Tytuł: Ograniczenie dostępu do funkcji wymagających konta
 
-Opis: Jako system chcę wymagać logowania do korzystania z głównych funkcji aplikacji, aby zapewnić bezpieczeństwo danych użytkowników.
+Opis: Jako system chcę umożliwić częściowe korzystanie z aplikacji bez logowania, ale wymagać logowania do zaawansowanych funkcji, aby zapewnić bezpieczeństwo danych użytkowników.
 
 Kryteria akceptacji:
 - Użytkownik nie zalogowany może zobaczyć stronę główną/logowania
-- Użytkownik nie zalogowany nie ma dostępu do funkcji tworzenia fiszek
-- Użytkownik nie zalogowany nie ma dostępu do przeglądania fiszek
-- Próba dostępu do chronionych funkcji bez logowania przekierowuje użytkownika do strony logowania
-- Po zalogowaniu użytkownik otrzymuje dostęp do wszystkich funkcji aplikacji
+- Użytkownik nie zalogowany MOŻE korzystać z tworzenia fiszek "ad-hoc" (fiszki przechowywane lokalnie w localStorage)
+- Użytkownik nie zalogowany MOŻE przeglądać fiszki utworzone lokalnie
+- Użytkownik nie zalogowany NIE MA dostępu do funkcji Kolekcji (US-003)
+- Próba dostępu do kolekcji bez logowania przekierowuje użytkownika do strony logowania
+- Po zalogowaniu użytkownik otrzymuje dostęp do wszystkich funkcji aplikacji, w tym kolekcji
 
 ## 6. Metryki sukcesu
 
