@@ -9,10 +9,6 @@ import { EmptyState } from "./EmptyState";
 import { LoadingState } from "./LoadingState";
 import { ErrorDisplay } from "./ErrorDisplay";
 
-interface StudyViewClientProps {
-  initialFlashcards?: never; // Reserved for future SSR support
-}
-
 /**
  * StudyViewClient is the main React component for the study view.
  * It manages the entire study view state and coordinates all sub-components.

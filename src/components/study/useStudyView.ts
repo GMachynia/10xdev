@@ -3,6 +3,16 @@ import { fetchFlashcards, updateFlashcard, deleteFlashcard } from "../../lib/uti
 import type { StudyViewState, FlashcardDTO, UpdateFlashcardCommand } from "../../types.ts";
 
 /**
+ * Helper function to redirect to login page.
+ * Extracted outside the hook to avoid react-compiler warnings.
+ */
+function redirectToLogin() {
+  if (typeof window !== "undefined") {
+    window.location.href = "/";
+  }
+}
+
+/**
  * Custom hook for managing the StudyView state and operations.
  * Handles fetching flashcards, mode switching, study sessions, navigation, and optimistic updates.
  */
@@ -287,10 +297,10 @@ export function useStudyView() {
         });
 
         // Handle 401 - redirect to login
-        if (error.error.code === "UNAUTHORIZED" && typeof window !== "undefined") {
+        if (error.error.code === "UNAUTHORIZED") {
           // Use setTimeout to defer the redirect outside of the render cycle
           setTimeout(() => {
-            window.location.href = "/";
+            redirectToLogin();
           }, 0);
         }
 
@@ -392,10 +402,10 @@ export function useStudyView() {
         });
 
         // Handle 401 - redirect to login
-        if (error.error.code === "UNAUTHORIZED" && typeof window !== "undefined") {
+        if (error.error.code === "UNAUTHORIZED") {
           // Use setTimeout to defer the redirect outside of the render cycle
           setTimeout(() => {
-            window.location.href = "/";
+            redirectToLogin();
           }, 0);
         }
 
