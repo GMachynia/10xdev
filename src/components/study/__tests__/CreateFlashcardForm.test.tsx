@@ -10,8 +10,8 @@ describe("CreateFlashcardForm", () => {
   const originalLocation = window.location;
 
   beforeEach(() => {
-    delete (window as any).location;
-    window.location = { ...originalLocation, href: "" } as any;
+    delete (window as Partial<Window>).location;
+    window.location = { ...originalLocation, href: "" } as Location;
   });
 
   afterEach(() => {
@@ -63,9 +63,7 @@ describe("CreateFlashcardForm", () => {
     const input = screen.getByLabelText("Tekst źródłowy");
     await user.type(input, "a".repeat(201));
 
-    expect(
-      screen.getByText("Tekst źródłowy przekracza maksymalną długość 200 znaków")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Tekst źródłowy przekracza maksymalną długość 200 znaków")).toBeInTheDocument();
   });
 
   it("should display character counter", async () => {
@@ -240,4 +238,3 @@ describe("CreateFlashcardForm", () => {
     expect(apiClient.createFlashcard).not.toHaveBeenCalled();
   });
 });
-

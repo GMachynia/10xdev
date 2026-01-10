@@ -9,15 +9,19 @@ import {
 import type { SupabaseClient } from "../../../db/supabase.client";
 import type { FlashcardDTO } from "../../../types";
 
+type MockSupabaseClient = Partial<SupabaseClient> & {
+  from: ReturnType<typeof vi.fn>;
+};
+
 describe("Flashcards Service", () => {
-  let mockSupabase: SupabaseClient;
+  let mockSupabase: MockSupabaseClient;
   const userId = "550e8400-e29b-41d4-a716-446655440000";
 
   beforeEach(() => {
     // Create a mock Supabase client
     mockSupabase = {
       from: vi.fn(),
-    } as any;
+    };
   });
 
   describe("listFlashcards", () => {
@@ -36,7 +40,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await listFlashcards(mockSupabase, userId, { order: "id" });
 
@@ -62,7 +66,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await listFlashcards(mockSupabase, userId, { order: "random" });
 
@@ -86,7 +90,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await listFlashcards(mockSupabase, userId, { order: "id", limit: 1 });
 
@@ -109,7 +113,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await listFlashcards(mockSupabase, userId, { order: "id", offset: 1, limit: 10 });
 
@@ -137,7 +141,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await listFlashcards(mockSupabase, userId, {});
 
@@ -156,7 +160,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await listFlashcards(mockSupabase, userId, {});
 
@@ -179,7 +183,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await getFlashcardById(mockSupabase, "1", userId);
 
@@ -214,7 +218,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await getFlashcardById(mockSupabase, "1", userId);
 
@@ -233,7 +237,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await getFlashcardById(mockSupabase, "1", userId);
 
@@ -256,7 +260,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await createFlashcard(mockSupabase, userId, command);
 
@@ -282,7 +286,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await createFlashcard(mockSupabase, userId, command);
 
@@ -308,7 +312,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await createFlashcard(mockSupabase, userId, command);
 
@@ -359,7 +363,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await createFlashcard(mockSupabase, userId, command);
 
@@ -384,7 +388,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await updateFlashcard(mockSupabase, "1", userId, command);
 
@@ -407,7 +411,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await updateFlashcard(mockSupabase, "1", userId, command);
 
@@ -430,7 +434,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await updateFlashcard(mockSupabase, "1", userId, command);
 
@@ -456,7 +460,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await updateFlashcard(mockSupabase, "1", userId, command);
 
@@ -481,7 +485,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await updateFlashcard(mockSupabase, "1", userId, command);
 
@@ -538,7 +542,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await updateFlashcard(mockSupabase, "1", userId, command);
 
@@ -557,7 +561,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await deleteFlashcard(mockSupabase, "1", userId);
 
@@ -588,7 +592,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await deleteFlashcard(mockSupabase, "1", userId);
 
@@ -604,7 +608,7 @@ describe("Flashcards Service", () => {
         }),
       };
 
-      (mockSupabase.from as any).mockReturnValue(mockQueryBuilder);
+      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockQueryBuilder);
 
       const result = await deleteFlashcard(mockSupabase, "1", userId);
 
@@ -613,4 +617,3 @@ describe("Flashcards Service", () => {
     });
   });
 });
-

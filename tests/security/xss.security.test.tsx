@@ -5,7 +5,7 @@ import type { FlashcardDTO } from "../../src/types";
 
 /**
  * XSS (Cross-Site Scripting) Security Tests
- * 
+ *
  * These tests verify that user input is properly escaped and sanitized
  * to prevent XSS attacks.
  */
@@ -172,14 +172,14 @@ describe("XSS Protection", () => {
       const { container } = render(<FlashcardCard {...mockProps} />);
 
       // Attributes should not be injected
-      const element = container.querySelector('[onload]');
+      const element = container.querySelector("[onload]");
       expect(element).toBeNull();
     });
 
     it("should escape style attributes", () => {
       const maliciousFlashcard: FlashcardDTO = {
         id: "1",
-        source_text: 'Test<div style="background:url(javascript:alert(\'XSS\'))">',
+        source_text: "Test<div style=\"background:url(javascript:alert('XSS'))\">",
         translation: null,
       };
 
@@ -203,7 +203,7 @@ describe("XSS Protection", () => {
     it("should validate and sanitize source_text length", () => {
       /**
        * API should enforce max length for source_text
-       * 
+       *
        * Test scenario:
        * 1. Send POST /api/flashcards with source_text > 200 chars
        * 2. API returns 400 Bad Request with validation error
@@ -215,7 +215,7 @@ describe("XSS Protection", () => {
     it("should trim whitespace from inputs", () => {
       /**
        * API should trim leading/trailing whitespace
-       * 
+       *
        * Test scenario:
        * 1. Send POST /api/flashcards with "  Test  "
        * 2. API stores "Test" (trimmed)
@@ -227,7 +227,7 @@ describe("XSS Protection", () => {
     it("should handle special characters safely", () => {
       /**
        * API should accept special characters but store them safely
-       * 
+       *
        * Test scenario:
        * 1. Send POST /api/flashcards with special chars: & < > " '
        * 2. API stores characters as-is (database handles escaping)
@@ -241,12 +241,12 @@ describe("XSS Protection", () => {
     it("should have CSP headers configured", () => {
       /**
        * Verify CSP headers are set correctly
-       * 
+       *
        * Recommended CSP for this app:
-       * Content-Security-Policy: default-src 'self'; script-src 'self'; 
-       *   style-src 'self' 'unsafe-inline'; img-src 'self' data:; 
+       * Content-Security-Policy: default-src 'self'; script-src 'self';
+       *   style-src 'self' 'unsafe-inline'; img-src 'self' data:;
        *   connect-src 'self' https://*.supabase.co;
-       * 
+       *
        * Test scenario:
        * 1. Make request to app
        * 2. Check response headers for CSP
@@ -258,7 +258,7 @@ describe("XSS Protection", () => {
     it("should prevent inline script execution", () => {
       /**
        * CSP should block inline scripts
-       * 
+       *
        * Test scenario:
        * 1. Attempt to inject <script>alert('XSS')</script>
        * 2. CSP blocks execution
@@ -272,12 +272,12 @@ describe("XSS Protection", () => {
     it("should use React's built-in XSS protection", () => {
       /**
        * React automatically escapes all text content
-       * 
+       *
        * Documentation:
        * - JSX syntax prevents XSS by default
        * - dangerouslySetInnerHTML is not used in this app
        * - All user input is displayed via {variable} syntax
-       * 
+       *
        * Verification:
        * - Search codebase for dangerouslySetInnerHTML (should be 0 results)
        * - All flashcard content is rendered via JSX text interpolation
@@ -288,7 +288,7 @@ describe("XSS Protection", () => {
     it("should not use dangerouslySetInnerHTML", () => {
       /**
        * Verify dangerouslySetInnerHTML is not used
-       * 
+       *
        * Test scenario:
        * 1. Grep codebase for "dangerouslySetInnerHTML"
        * 2. Should return 0 results
@@ -298,4 +298,3 @@ describe("XSS Protection", () => {
     });
   });
 });
-

@@ -2,18 +2,22 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 
 /**
  * Integration tests for Flashcards API endpoints
- * 
+ *
  * These tests require a running Supabase instance.
  * Run `supabase start` before running these tests.
- * 
+ *
  * To run these tests:
  * npm run test:integration
  */
 
 describe.skip("Flashcards API Integration Tests", () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let supabaseUrl: string;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let supabaseAnonKey: string;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let authToken: string;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let userId: string;
 
   beforeAll(async () => {
@@ -168,4 +172,3 @@ describe.skip("Flashcards API Integration Tests", () => {
     });
   });
 });
-

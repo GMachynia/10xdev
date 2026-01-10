@@ -39,14 +39,14 @@ describe("Validation utilities", () => {
     });
 
     it("should return false for null or undefined", () => {
-      expect(isValidUUID(null as any)).toBe(false);
-      expect(isValidUUID(undefined as any)).toBe(false);
+      expect(isValidUUID(null as unknown as string)).toBe(false);
+      expect(isValidUUID(undefined as unknown as string)).toBe(false);
     });
 
     it("should return false for non-string values", () => {
-      expect(isValidUUID(123 as any)).toBe(false);
-      expect(isValidUUID({} as any)).toBe(false);
-      expect(isValidUUID([] as any)).toBe(false);
+      expect(isValidUUID(123 as unknown as string)).toBe(false);
+      expect(isValidUUID({} as unknown as string)).toBe(false);
+      expect(isValidUUID([] as unknown as string)).toBe(false);
     });
 
     it("should return false for empty string", () => {

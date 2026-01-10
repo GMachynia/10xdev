@@ -9,8 +9,8 @@ describe("LoginForm", () => {
 
   beforeEach(() => {
     global.fetch = mockFetch;
-    delete (window as any).location;
-    window.location = { ...originalLocation, href: "" } as any;
+    delete (window as Partial<Window>).location;
+    window.location = { ...originalLocation, href: "" } as Location;
   });
 
   afterEach(() => {
@@ -199,4 +199,3 @@ describe("LoginForm", () => {
     });
   });
 });
-

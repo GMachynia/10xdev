@@ -33,4 +33,3 @@ describe("ProgressIndicator", () => {
     expect(screen.getByText("999 / 1000")).toBeInTheDocument();
   });
 });
-

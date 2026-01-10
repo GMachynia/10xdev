@@ -530,13 +530,11 @@ describe("useStudyView", () => {
         expect(result.current.state.flashcards).toHaveLength(3);
       });
 
-      const originalCard = result.current.state.flashcards[0];
-
       try {
         await act(async () => {
           await result.current.updateFlashcard("1", { source_text: "Updated" });
         });
-      } catch (error) {
+      } catch {
         // Expected error
       }
 
@@ -670,7 +668,7 @@ describe("useStudyView", () => {
         await act(async () => {
           await result.current.deleteFlashcard("1");
         });
-      } catch (error) {
+      } catch {
         // Expected error
       }
 
@@ -725,4 +723,3 @@ describe("useStudyView", () => {
     });
   });
 });
-

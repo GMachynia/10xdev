@@ -42,4 +42,3 @@ describe("CharacterCounter", () => {
     expect(screen.getByText("9999 / 10000")).toBeInTheDocument();
   });
 });
-

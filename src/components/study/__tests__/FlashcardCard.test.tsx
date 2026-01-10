@@ -62,8 +62,10 @@ describe("FlashcardCard", () => {
     const onFlip = vi.fn();
     const onEdit = vi.fn();
     const onDelete = vi.fn();
-    
-    render(<FlashcardCard flashcard={mockFlashcard} isFlipped={false} onFlip={onFlip} onEdit={onEdit} onDelete={onDelete} />);
+
+    render(
+      <FlashcardCard flashcard={mockFlashcard} isFlipped={false} onFlip={onFlip} onEdit={onEdit} onDelete={onDelete} />
+    );
 
     const card = screen.getByRole("button", { name: /kliknij, aby zobaczyć rewers/i });
     card.focus();
@@ -77,8 +79,10 @@ describe("FlashcardCard", () => {
     const onFlip = vi.fn();
     const onEdit = vi.fn();
     const onDelete = vi.fn();
-    
-    render(<FlashcardCard flashcard={mockFlashcard} isFlipped={false} onFlip={onFlip} onEdit={onEdit} onDelete={onDelete} />);
+
+    render(
+      <FlashcardCard flashcard={mockFlashcard} isFlipped={false} onFlip={onFlip} onEdit={onEdit} onDelete={onDelete} />
+    );
 
     const editButton = screen.getByLabelText("Edytuj fiszkę");
     await user.click(editButton);
@@ -92,8 +96,10 @@ describe("FlashcardCard", () => {
     const onFlip = vi.fn();
     const onEdit = vi.fn();
     const onDelete = vi.fn();
-    
-    render(<FlashcardCard flashcard={mockFlashcard} isFlipped={false} onFlip={onFlip} onEdit={onEdit} onDelete={onDelete} />);
+
+    render(
+      <FlashcardCard flashcard={mockFlashcard} isFlipped={false} onFlip={onFlip} onEdit={onEdit} onDelete={onDelete} />
+    );
 
     const deleteButton = screen.getByLabelText("Usuń fiszkę");
     await user.click(deleteButton);
@@ -107,8 +113,10 @@ describe("FlashcardCard", () => {
     const onFlip = vi.fn();
     const onEdit = vi.fn();
     const onDelete = vi.fn();
-    
-    render(<FlashcardCard flashcard={mockFlashcard} isFlipped={false} onFlip={onFlip} onEdit={onEdit} onDelete={onDelete} />);
+
+    render(
+      <FlashcardCard flashcard={mockFlashcard} isFlipped={false} onFlip={onFlip} onEdit={onEdit} onDelete={onDelete} />
+    );
 
     const editButton = screen.getByLabelText("Edytuj fiszkę");
     await user.click(editButton);
@@ -121,8 +129,10 @@ describe("FlashcardCard", () => {
     const onFlip = vi.fn();
     const onEdit = vi.fn();
     const onDelete = vi.fn();
-    
-    render(<FlashcardCard flashcard={mockFlashcard} isFlipped={false} onFlip={onFlip} onEdit={onEdit} onDelete={onDelete} />);
+
+    render(
+      <FlashcardCard flashcard={mockFlashcard} isFlipped={false} onFlip={onFlip} onEdit={onEdit} onDelete={onDelete} />
+    );
 
     const deleteButton = screen.getByLabelText("Usuń fiszkę");
     await user.click(deleteButton);
@@ -151,4 +161,3 @@ describe("FlashcardCard", () => {
     expect(card).toHaveAttribute("tabIndex", "0");
   });
 });
-

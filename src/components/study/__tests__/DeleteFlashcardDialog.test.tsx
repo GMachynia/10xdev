@@ -54,7 +54,7 @@ describe("DeleteFlashcardDialog", () => {
     const user = userEvent.setup();
     const onCancel = vi.fn();
     const onConfirm = vi.fn();
-    
+
     render(<DeleteFlashcardDialog flashcard={mockFlashcard} onConfirm={onConfirm} onCancel={onCancel} isOpen={true} />);
 
     const cancelButtons = screen.getAllByRole("button", { name: /anuluj/i });
@@ -108,4 +108,3 @@ describe("DeleteFlashcardDialog", () => {
     });
   });
 });
-

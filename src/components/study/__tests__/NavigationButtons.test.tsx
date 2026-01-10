@@ -68,7 +68,7 @@ describe("NavigationButtons", () => {
     const user = userEvent.setup();
     const onPrevious = vi.fn();
     const onNext = vi.fn();
-    
+
     render(<NavigationButtons hasPrevious={false} hasNext={true} onPrevious={onPrevious} onNext={onNext} />);
 
     const previousButton = screen.getByLabelText("Poprzednia fiszka");
@@ -86,7 +86,7 @@ describe("NavigationButtons", () => {
     const user = userEvent.setup();
     const onPrevious = vi.fn();
     const onNext = vi.fn();
-    
+
     render(<NavigationButtons hasPrevious={true} hasNext={false} onPrevious={onPrevious} onNext={onNext} />);
 
     const nextButton = screen.getByLabelText("Następna fiszka");
@@ -104,7 +104,7 @@ describe("NavigationButtons", () => {
     const user = userEvent.setup();
     const onPrevious = vi.fn();
     const onNext = vi.fn();
-    
+
     render(<NavigationButtons hasPrevious={true} hasNext={true} onPrevious={onPrevious} onNext={onNext} />);
 
     const previousButton = screen.getByLabelText("Poprzednia fiszka");
@@ -119,4 +119,3 @@ describe("NavigationButtons", () => {
     expect(onNext).toHaveBeenCalledTimes(1);
   });
 });
-

@@ -74,8 +74,15 @@ describe("StudyModeSelector", () => {
   it("should not call onStartStudySession when button is disabled", async () => {
     const user = userEvent.setup();
     const onStartStudySession = vi.fn();
-    
-    render(<StudyModeSelector mode="study" onModeChange={vi.fn()} onStartStudySession={onStartStudySession} hasFlashcards={false} />);
+
+    render(
+      <StudyModeSelector
+        mode="study"
+        onModeChange={vi.fn()}
+        onStartStudySession={onStartStudySession}
+        hasFlashcards={false}
+      />
+    );
 
     const startButton = screen.getByRole("button", { name: /rozpocznij sesję powtórek/i });
     // Try to click disabled button - userEvent will not trigger handler
@@ -91,8 +98,15 @@ describe("StudyModeSelector", () => {
   it("should be keyboard accessible", async () => {
     const user = userEvent.setup();
     const onStartStudySession = vi.fn();
-    
-    render(<StudyModeSelector mode="study" onModeChange={vi.fn()} onStartStudySession={onStartStudySession} hasFlashcards={true} />);
+
+    render(
+      <StudyModeSelector
+        mode="study"
+        onModeChange={vi.fn()}
+        onStartStudySession={onStartStudySession}
+        hasFlashcards={true}
+      />
+    );
 
     const startButton = screen.getByRole("button", { name: /rozpocznij sesję powtórek/i });
     startButton.focus();
@@ -113,4 +127,3 @@ describe("StudyModeSelector", () => {
     expect(studyTab).toHaveAttribute("data-state", "active");
   });
 });
-

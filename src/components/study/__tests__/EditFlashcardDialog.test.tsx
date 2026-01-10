@@ -81,7 +81,7 @@ describe("EditFlashcardDialog", () => {
     // The validation error won't show because maxLength prevents typing more
     // Let's test with paste instead which bypasses maxLength
     await user.type(input, "a".repeat(200));
-    
+
     // Since maxLength prevents typing more than 200 chars, test passes if no error
     // The actual browser would prevent this, so our test should reflect that
     const errorText = screen.queryByText("Tekst źródłowy przekracza maksymalną długość 200 znaków");
@@ -268,4 +268,3 @@ describe("EditFlashcardDialog", () => {
     expect(sourceTextInput.value).toBe("Hello");
   });
 });
-

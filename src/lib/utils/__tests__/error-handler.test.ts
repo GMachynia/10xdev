@@ -82,11 +82,7 @@ describe("Error Handler", () => {
         actual_length: 250,
       };
 
-      const response = createErrorResponse(
-        "VALIDATION_ERROR",
-        "Source text exceeds maximum length",
-        details
-      );
+      const response = createErrorResponse("VALIDATION_ERROR", "Source text exceeds maximum length", details);
 
       expect(response.status).toBe(400);
 
@@ -147,7 +143,7 @@ describe("Error Handler", () => {
     });
 
     it("should map all error codes to correct HTTP status codes", async () => {
-      const testCases: Array<{ code: ErrorCode; expectedStatus: number }> = [
+      const testCases: { code: ErrorCode; expectedStatus: number }[] = [
         { code: "VALIDATION_ERROR", expectedStatus: 400 },
         { code: "UNAUTHORIZED", expectedStatus: 401 },
         { code: "NOT_FOUND", expectedStatus: 404 },
@@ -177,4 +173,3 @@ describe("Error Handler", () => {
     });
   });
 });
-
