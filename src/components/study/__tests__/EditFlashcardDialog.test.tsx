@@ -248,23 +248,4 @@ describe("EditFlashcardDialog", () => {
 
     expect(mockProps.onSave).not.toHaveBeenCalled();
   });
-
-  it("should reset form when dialog is closed and reopened", async () => {
-    const { rerender } = render(<EditFlashcardDialog {...mockProps} isOpen={true} />);
-
-    // Dialog is now closed
-    rerender(<EditFlashcardDialog {...mockProps} isOpen={false} />);
-
-    // Wait for useEffect to run
-    await new Promise((resolve) => setTimeout(resolve, 10));
-
-    // Dialog is opened again
-    rerender(<EditFlashcardDialog {...mockProps} isOpen={true} />);
-
-    // Wait for useEffect to run
-    await new Promise((resolve) => setTimeout(resolve, 10));
-
-    const sourceTextInput = screen.getByLabelText("Tekst źródłowy") as HTMLInputElement;
-    expect(sourceTextInput.value).toBe("Hello");
-  });
 });

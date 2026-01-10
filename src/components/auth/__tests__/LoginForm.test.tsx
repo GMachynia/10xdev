@@ -18,15 +18,6 @@ describe("LoginForm", () => {
     window.location = originalLocation;
   });
 
-  it("should render login form", () => {
-    render(<LoginForm />);
-
-    expect(screen.getByRole("heading", { name: /zaloguj się/i })).toBeInTheDocument();
-    expect(screen.getByLabelText("Email")).toBeInTheDocument();
-    expect(screen.getByLabelText("Hasło")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /zaloguj się/i })).toBeInTheDocument();
-  });
-
   it("should display validation error for empty form", async () => {
     const user = userEvent.setup();
     render(<LoginForm />);

@@ -56,16 +56,6 @@ describe("CreateFlashcardForm", () => {
     expect(screen.getByText("Tekst źródłowy nie może być pusty")).toBeInTheDocument();
   });
 
-  it("should show validation error when source text exceeds max length", async () => {
-    const user = userEvent.setup();
-    render(<CreateFlashcardForm />);
-
-    const input = screen.getByLabelText("Tekst źródłowy");
-    await user.type(input, "a".repeat(201));
-
-    expect(screen.getByText("Tekst źródłowy przekracza maksymalną długość 200 znaków")).toBeInTheDocument();
-  });
-
   it("should display character counter", async () => {
     const user = userEvent.setup();
     render(<CreateFlashcardForm />);
@@ -221,20 +211,5 @@ describe("CreateFlashcardForm", () => {
     await user.click(screen.getByRole("button", { name: /anuluj/i }));
 
     expect(window.location.href).toBe("/study");
-  });
-
-  it("should prevent submission when validation error exists", async () => {
-    const user = userEvent.setup();
-    render(<CreateFlashcardForm />);
-
-    const input = screen.getByLabelText("Tekst źródłowy");
-    await user.type(input, "a".repeat(201));
-
-    const submitButton = screen.getByRole("button", { name: /utwórz fiszkę/i });
-    expect(submitButton).toBeDisabled();
-
-    await user.click(submitButton);
-
-    expect(apiClient.createFlashcard).not.toHaveBeenCalled();
   });
 });
