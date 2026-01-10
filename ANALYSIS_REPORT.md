@@ -1,6 +1,6 @@
 # MVP Project Analysis Report
 
-**Generated:** 2026-01-10 21:17:47
+**Generated:** 2026-01-10 21:43:54
 
 ## Analysis Checklist
 
@@ -62,10 +62,11 @@
 
 **Findings:**
 - ✅ Unit tests (Vitest):
-  - 20 test files found (*.test.tsx, *.test.ts)
-  - Component tests: LoginForm, RegisterForm, ResetPasswordForm, FlashcardCard, StudyModeSelector, etc.
+  - 23 test files found (7 *.test.ts, 13 *.test.tsx, 3 *.spec.ts)
+  - Component tests: LoginForm, RegisterForm, ResetPasswordForm, FlashcardCard, StudyModeSelector, EditFlashcardDialog, DeleteFlashcardDialog, CreateFlashcardForm, NavigationButtons, ProgressIndicator, CharacterCounter, Button
   - Service tests: flashcards.service.test.ts
   - Utility tests: validation.test.ts, error-handler.test.ts
+  - Hook tests: useStudyView.test.ts
 - ✅ End-to-End tests (Playwright):
   - 3 E2E test files: `login.spec.ts`, `flashcards.spec.ts`, `example.spec.ts`
   - Tests cover user flows and interactions
