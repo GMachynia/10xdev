@@ -11,12 +11,10 @@ describe("RegisterForm", () => {
     global.fetch = mockFetch;
     delete (window as any).location;
     window.location = { ...originalLocation, href: "" } as any;
-    vi.useFakeTimers();
   });
 
   afterEach(() => {
     vi.clearAllMocks();
-    vi.useRealTimers();
     window.location = originalLocation;
   });
 
@@ -63,6 +61,7 @@ describe("RegisterForm", () => {
   });
 
   it("should handle successful registration", async () => {
+    vi.useFakeTimers();
     const user = userEvent.setup({ delay: null });
     mockFetch.mockResolvedValueOnce({
       ok: true,
@@ -92,11 +91,13 @@ describe("RegisterForm", () => {
     });
 
     // Fast-forward time to trigger redirect
-    vi.advanceTimersByTime(1500);
+    await vi.advanceTimersByTimeAsync(1500);
 
     await waitFor(() => {
       expect(window.location.href).toBe("/study");
     });
+    
+    vi.useRealTimers();
   });
 
   it("should display error message on failed registration", async () => {
@@ -120,17 +121,11 @@ describe("RegisterForm", () => {
 
   it("should display loading state during registration", async () => {
     const user = userEvent.setup({ delay: null });
-    mockFetch.mockImplementation(
-      () =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({
-              ok: true,
-              json: async () => ({ message: "Registration successful" }),
-            });
-          }, 100);
-        })
-    );
+    let resolvePromise: (value: any) => void;
+    const promise = new Promise((resolve) => {
+      resolvePromise = resolve;
+    });
+    mockFetch.mockReturnValueOnce(promise);
 
     render(<RegisterForm />);
 
@@ -142,6 +137,11 @@ describe("RegisterForm", () => {
     expect(screen.getByText("Rejestrowanie...")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /rejestrowanie/i })).toBeDisabled();
 
+    resolvePromise!({
+      ok: true,
+      json: async () => ({ message: "Registration successful" }),
+    });
+
     await waitFor(() => {
       expect(screen.getByText("Rejestracja zakończona!")).toBeInTheDocument();
     });
@@ -149,17 +149,11 @@ describe("RegisterForm", () => {
 
   it("should disable inputs during loading", async () => {
     const user = userEvent.setup({ delay: null });
-    mockFetch.mockImplementation(
-      () =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({
-              ok: true,
-              json: async () => ({ message: "Registration successful" }),
-            });
-          }, 100);
-        })
-    );
+    let resolvePromise: (value: any) => void;
+    const promise = new Promise((resolve) => {
+      resolvePromise = resolve;
+    });
+    mockFetch.mockReturnValueOnce(promise);
 
     render(<RegisterForm />);
 
@@ -175,6 +169,11 @@ describe("RegisterForm", () => {
     expect(emailInput).toBeDisabled();
     expect(passwordInput).toBeDisabled();
     expect(confirmPasswordInput).toBeDisabled();
+
+    resolvePromise!({
+      ok: true,
+      json: async () => ({ message: "Registration successful" }),
+    });
 
     await waitFor(() => {
       expect(screen.getByText("Rejestracja zakończona!")).toBeInTheDocument();
