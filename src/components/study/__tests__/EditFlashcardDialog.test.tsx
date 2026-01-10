@@ -249,23 +249,28 @@ describe("EditFlashcardDialog", () => {
     expect(mockProps.onSave).not.toHaveBeenCalled();
   });
 
-  it("should reset form when dialog is closed and reopened", async () => {
-    const { rerender } = render(<EditFlashcardDialog {...mockProps} isOpen={true} />);
+  it("should reset form when flashcard changes", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<EditFlashcardDialog {...mockProps} />);
 
-    // Dialog is now closed
-    rerender(<EditFlashcardDialog {...mockProps} isOpen={false} />);
+    // Modify the form
+    const sourceTextInput = screen.getByLabelText("Tekst źródłowy");
+    await user.clear(sourceTextInput);
+    await user.type(sourceTextInput, "Modified");
 
-    // Wait for useEffect to run
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    // Change to a different flashcard
+    const newFlashcard: FlashcardDTO = {
+      id: "2",
+      source_text: "Goodbye",
+      translation: "Do widzenia",
+    };
+    
+    rerender(<EditFlashcardDialog {...mockProps} flashcard={newFlashcard} />);
 
-    // Dialog is opened again
-    rerender(<EditFlashcardDialog {...mockProps} isOpen={true} />);
-
-    // Wait for useEffect to run
-    await new Promise((resolve) => setTimeout(resolve, 10));
-
-    const sourceTextInput = screen.getByLabelText("Tekst źródłowy") as HTMLInputElement;
-    expect(sourceTextInput.value).toBe("Hello");
+    await waitFor(() => {
+      const input = screen.getByLabelText("Tekst źródłowy") as HTMLInputElement;
+      expect(input.value).toBe("Goodbye");
+    });
   });
 });
 
