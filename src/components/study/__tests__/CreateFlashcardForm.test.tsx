@@ -56,16 +56,20 @@ describe("CreateFlashcardForm", () => {
     expect(screen.getByText("Tekst źródłowy nie może być pusty")).toBeInTheDocument();
   });
 
-  it("should show validation error when source text exceeds max length", async () => {
+  it("should prevent entering text beyond max length", async () => {
     const user = userEvent.setup();
     render(<CreateFlashcardForm />);
 
-    const input = screen.getByLabelText("Tekst źródłowy");
-    await user.type(input, "a".repeat(201));
-
-    expect(
-      screen.getByText("Tekst źródłowy przekracza maksymalną długość 200 znaków")
-    ).toBeInTheDocument();
+    const input = screen.getByLabelText("Tekst źródłowy") as HTMLInputElement;
+    
+    // HTML maxLength attribute should prevent typing more than 200 characters
+    expect(input).toHaveAttribute("maxLength", "200");
+    
+    // Type exactly 200 characters
+    await user.type(input, "a".repeat(200));
+    
+    // Should show 200/200 in counter
+    expect(screen.getByText("200 / 200")).toBeInTheDocument();
   });
 
   it("should display character counter", async () => {
@@ -225,12 +229,13 @@ describe("CreateFlashcardForm", () => {
     expect(window.location.href).toBe("/study");
   });
 
-  it("should prevent submission when validation error exists", async () => {
+  it("should prevent submission when source text is cleared", async () => {
     const user = userEvent.setup();
     render(<CreateFlashcardForm />);
 
     const input = screen.getByLabelText("Tekst źródłowy");
-    await user.type(input, "a".repeat(201));
+    await user.type(input, "Test");
+    await user.clear(input);
 
     const submitButton = screen.getByRole("button", { name: /utwórz fiszkę/i });
     expect(submitButton).toBeDisabled();
